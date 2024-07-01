@@ -2,7 +2,7 @@
 
 **[ 테스트 환경 ]**
 ```
-bukkit : paper 1.20 ~ 1.20.4
+Bukkit : paper 1.20 ~ 1.20.4
 
 MMOItems : v6.7.3 +
 
