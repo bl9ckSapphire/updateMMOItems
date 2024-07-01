@@ -92,6 +92,7 @@ public class Update {
             return;
         }
 
+
         // 인벤토리에 빈 공간이 있는지 확인
         if (inventory.firstEmpty() == -1) {
             player.sendMessage(miniMessage.deserialize(Message.NO_INVENTORY_SPACE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
@@ -104,11 +105,21 @@ public class Update {
             return;
         }
 
-        // 메인핸드에 있는 아이템의 수량을 1 감소시킴
-        itemInHand.setAmount(itemInHand.getAmount() - 1);
+
+        // 메인핸드에 있는 아이템의 수량을 가져옴
+        int itemAmount = itemInHand.getAmount();
+
+        // 메인핸드의 아이템을 제거
+        player.getInventory().setItemInMainHand(null);
+
+        // 업데이트된 아이템을 생성하고 수량을 설정
+        ItemStack totalGiveItems = updatedItem.clone();
+        totalGiveItems.setAmount(itemAmount);
 
         // 업데이트된 아이템을 인벤토리에 추가
-        inventory.addItem(updatedItem);
+        inventory.addItem(totalGiveItems);
+
+
         player.sendMessage(miniMessage.deserialize(Message.SUCCESS_UPDATE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
         PlaySounds.playSounds(player,
