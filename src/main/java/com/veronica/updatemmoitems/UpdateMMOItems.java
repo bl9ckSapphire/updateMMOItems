@@ -33,21 +33,20 @@ public final class UpdateMMOItems extends JavaPlugin {
         // MMOItems 플러그인을 찾기
         Plugin mmoItemsPlugin = getServer().getPluginManager().getPlugin("MMOItems");
 
-        if (mmoItemsPlugin != null && mmoItemsPlugin.isEnabled()) {
+        if (mmoItemsPlugin != null && mmoItemsPlugin.isEnabled() && isNBTAPIAvailable()) {
             // Plugin startup logic
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "------------------------------------");
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "MMOItems 감지됨. 활성화 완료");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "--------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "MMOItems, NBT-API 감지됨. 활성화 완료");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "updateMMOItems 활성화");
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "--------------------------------------");
         } else {
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.RED + "---------------------------------------------------");
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "서버에 MMOItems 플러그인이 설치되지 않았습니다. 비활성화됨");
-            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "---------------------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.RED + "--------------------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "작동하려면 MMOItems, NBT-API 플러그인이 필요합니다.");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "updateMMOItems 비활성화...");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "--------------------------------------------------");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
-
 
         // config.yml 파일을 플러그인 폴더에 생성하는 bukkitAPI (폴더에 config.yml이 존재하지 안은 경우에만 생성)
         this.saveDefaultConfig();
@@ -68,6 +67,17 @@ public final class UpdateMMOItems extends JavaPlugin {
 
         // PluginManager에 CommandExecutor로 등록
         getCommand("updatemmoitems").setExecutor(commandHandler);
+    }
+
+    // nbtapi(NBTAPI) 는 getServer().getPluginManager().getPlugin() 으로 name 을 받아오는 과정에 하자가 있음
+    // 따라서, Class.forName() 로 클래스명이 존재하는지로 검사
+    private boolean isNBTAPIAvailable() {
+        try {
+            Class.forName("de.tr7zw.nbtapi.NBTItem");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     @Override
