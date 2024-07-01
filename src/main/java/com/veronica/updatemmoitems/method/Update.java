@@ -66,6 +66,20 @@ public class Update {
             return;
         }
 
+        // 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
+        if (itemInHand.getDurability() > 0) {
+            player.sendMessage(miniMessage.deserialize(Message.USED_ITEM.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+
+            Sounds.playFailSound(player,
+                    ConfigHandler.getInstance().getFailSounds(),
+                    ConfigHandler.getInstance().getFailVolume(),
+                    ConfigHandler.getInstance().getFailPitch()
+            );
+
+            return;
+        }
+
+
         // 이미 최신화된 아이템일 경우, 종료
         boolean isEqual = compareItems(itemInHand, updatedItem);
         if (isEqual) {

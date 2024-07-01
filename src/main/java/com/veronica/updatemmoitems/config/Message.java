@@ -12,6 +12,7 @@ public enum Message {
     NO_MMOITEMS("<prefix><white>올바른 아이템을 들고 시도해주세요."),
     ALREADY_LATEST("<yellow>이 명령어는 오직 플레이어를 통해서만 사용 가능합니다."),
     NO_LONGER_EXISTS("<prefix><white>더 이상 서버에 존재하지 않은 아이템입니다."),
+    USED_ITEM("<gold><bold>[</bold><yellow>내구도를 완전히 수리하신 후 사용해주세요."),
     NO_INVENTORY_SPACE("<gold><bold>[</bold><yellow>인벤토리에 공간이 없습니다."),
     SUCCESS_UPDATE("<white>아이템 업데이트 완료!"),
     RELOAD("<prefix><gold>config 리로드 완료.");
@@ -45,6 +46,8 @@ public enum Message {
         ALREADY_LATEST.setMessage(instance.getConfig().getString("message.already-latest"));
 
         NO_LONGER_EXISTS.setMessage(instance.getConfig().getString("message.no-longer-exists"));
+
+        USED_ITEM.setMessage(instance.getConfig().getString("message.used-item"));
 
         NO_INVENTORY_SPACE.setMessage(instance.getConfig().getString("message.no-inv-space"));
 
