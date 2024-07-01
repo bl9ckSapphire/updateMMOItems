@@ -1,4 +1,4 @@
-package com.veronica.updatemmoitems.method;
+package com.veronica.updatemmoitems.method.sub;
 
 import de.tr7zw.nbtapi.NBTItem;
 import net.Indyuce.mmoitems.MMOItems;
@@ -6,10 +6,10 @@ import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import org.bukkit.inventory.ItemStack;
 
-public class Get {
+public class GetItemsInfo {
 
     // 손에 들고 있는 MMOItems 정보를 가져오는 메서드
-    public static MMOItem getMMOItem(ItemStack itemStack) {
+    public static MMOItem getMMOItemsInfo(ItemStack itemStack) {
         NBTItem nbtItem = new NBTItem(itemStack);
 
 

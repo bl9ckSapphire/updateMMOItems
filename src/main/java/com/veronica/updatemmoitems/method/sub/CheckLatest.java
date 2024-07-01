@@ -1,15 +1,14 @@
-package com.veronica.updatemmoitems.method;
+package com.veronica.updatemmoitems.method.sub;
 
 import de.tr7zw.nbtapi.NBTItem;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class Check {
+public class CheckLatest {
 
     // 아이템 정보를 비교하는 메서드
     // 즉, 해당 아이템이 이미 최신화된 상태인지를 비교
-    public static boolean compareItems(ItemStack item1, ItemStack item2) {
+    public static boolean isLatestMMOItems(ItemStack item1, ItemStack item2) {
         if (item1 == null || item2 == null) {
             return false;
         }

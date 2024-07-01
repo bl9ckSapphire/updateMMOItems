@@ -35,14 +35,14 @@ public final class UpdateMMOItems extends JavaPlugin {
 
         if (mmoItemsPlugin != null && mmoItemsPlugin.isEnabled()) {
             // Plugin startup logic
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ ChatColor.GOLD + "---------------------------------------");
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ChatColor.GOLD + "손에 든 MMOItems 업데이트 플러그인 활성화");
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ChatColor.GOLD + "---------------------------------------");
-            getLogger().info("MMOItems 감지됨. 활성화 완료");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "MMOItems 감지됨. 활성화 완료");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "updateMMOItems 활성화");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "------------------------------------");
         } else {
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ ChatColor.RED + "---------------------------------------------------");
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ChatColor.RED + "서버에 MMOItems 플러그인이 설치되지 않았습니다. 비활성화됨");
-            getServer().getConsoleSender().sendMessage("[UpdateMMOItems] "+ChatColor.RED + "---------------------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.RED + "---------------------------------------------------");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "서버에 MMOItems 플러그인이 설치되지 않았습니다. 비활성화됨");
+            getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "---------------------------------------------------");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

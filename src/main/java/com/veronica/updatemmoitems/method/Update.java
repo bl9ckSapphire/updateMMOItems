@@ -3,6 +3,7 @@ package com.veronica.updatemmoitems.method;
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
+import com.veronica.updatemmoitems.method.sub.PlaySounds;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -10,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static com.veronica.updatemmoitems.method.Check.compareItems;
-import static com.veronica.updatemmoitems.method.Get.getMMOItem;
+import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestMMOItems;
+import static com.veronica.updatemmoitems.method.sub.GetItemsInfo.getMMOItemsInfo;
 
 public class Update {
 
@@ -26,27 +27,25 @@ public class Update {
         if (itemInHand == null || itemInHand.getType().isAir() || itemInHand.getAmount() == 0) {
             player.sendMessage(miniMessage.deserialize(Message.IS_AIR.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
             );
-
             return;
         }
 
-        MMOItem mmoItem = getMMOItem(itemInHand);
+        MMOItem mmoItem = getMMOItemsInfo(itemInHand);
 
         // MMOItems 아이템이 아닌 경우
         if (mmoItem == null) {
             player.sendMessage(miniMessage.deserialize(Message.NO_MMOITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
             );
-
             return;
         }
 
@@ -57,7 +56,7 @@ public class Update {
         if (updatedItem == null) {
             player.sendMessage(miniMessage.deserialize(Message.NO_LONGER_EXISTS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
@@ -67,30 +66,29 @@ public class Update {
         }
 
         // 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
-        if (itemInHand.getDurability() > 0) {
+        // 동시에 config 설정에서, "work-only-max-dura" 설정을 true 로 활성화 했을 경우
+        if (itemInHand.getDurability() > 0 && ConfigHandler.getInstance().getIsWorkMaxDurability()) {
             player.sendMessage(miniMessage.deserialize(Message.USED_ITEM.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
             );
-
             return;
         }
 
 
         // 이미 최신화된 아이템일 경우, 종료
-        boolean isEqual = compareItems(itemInHand, updatedItem);
-        if (isEqual) {
+        boolean isLatest = isLatestMMOItems(itemInHand, updatedItem);
+        if (isLatest) {
             player.sendMessage(miniMessage.deserialize(Message.ALREADY_LATEST.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
             );
-
             return;
         }
 
@@ -98,12 +96,11 @@ public class Update {
         if (inventory.firstEmpty() == -1) {
             player.sendMessage(miniMessage.deserialize(Message.NO_INVENTORY_SPACE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-            Sounds.playFailSound(player,
+            PlaySounds.playSounds(player,
                     ConfigHandler.getInstance().getFailSounds(),
                     ConfigHandler.getInstance().getFailVolume(),
                     ConfigHandler.getInstance().getFailPitch()
             );
-
             return;
         }
 
@@ -114,7 +111,7 @@ public class Update {
         inventory.addItem(updatedItem);
         player.sendMessage(miniMessage.deserialize(Message.SUCCESS_UPDATE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
-        Sounds.playSuccessSound(player,
+        PlaySounds.playSounds(player,
                 ConfigHandler.getInstance().getSuccessSounds(),
                 ConfigHandler.getInstance().getSuccessVolume(),
                 ConfigHandler.getInstance().getSuccessPitch()
