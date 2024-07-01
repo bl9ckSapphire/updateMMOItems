@@ -1,0 +1,21 @@
+name: updateMMOItems
+version: '${version}'
+main: com.veronica.updatemmoitems.UpdateMMOItems
+api-version: '1.20'
+
+
+commands:
+  updatemmoitems:
+    description: 손에 들고있는 아이템을 업데이트합니다.
+    aliases: [ djqepdlxm(업데이트) ]
+    permission: updatemmoitems.use
+    permission-message: 권한 없음
+
+permissions:
+  updatemmoitems.use:
+    description: 아이템 업데이트 명령어를 사용할 수 있는 펄미션
+    default: true
+
+  updatemmoitems.reload:
+    description: 플러그인 리로드 권한
+    default: op
