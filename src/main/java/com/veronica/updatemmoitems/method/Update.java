@@ -65,9 +65,10 @@ public class Update {
             return;
         }
 
-        // 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
-        // 동시에 config 설정에서, "work-only-max-dura" 설정을 true 로 활성화 했을 경우
-        if (itemInHand.getDurability() > 0 && ConfigHandler.getInstance().getIsWorkMaxDurability()) {
+        // 1. 내구도가 존재하는 아이템인지 확인
+        // 2. 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
+        // 3. 동시에 config 설정에서, "work-only-max-dura" 설정을 true 로 활성화 했을 경우
+        if (itemInHand.getType().getMaxDurability() > 0 && itemInHand.getDurability() > 0 && ConfigHandler.getInstance().getIsWorkMaxDurability()) {
             player.sendMessage(miniMessage.deserialize(Message.USED_ITEM.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
             PlaySounds.playSounds(player,

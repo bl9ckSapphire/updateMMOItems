@@ -33,6 +33,7 @@ public final class UpdateMMOItems extends JavaPlugin {
         // MMOItems 플러그인을 찾기
         Plugin mmoItemsPlugin = getServer().getPluginManager().getPlugin("MMOItems");
 
+        // MMOItems 와 NBTAPI 존재 여부를 검사
         if (mmoItemsPlugin != null && mmoItemsPlugin.isEnabled() && isNBTAPIAvailable()) {
             // Plugin startup logic
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "--------------------------------------");
