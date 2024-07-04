@@ -11,6 +11,8 @@ public class ConfigHandler {
     private static ConfigHandler instance;
     private final FileConfiguration config;
     private boolean isMaxDurability;
+    private boolean isWorkCursorClick;
+    private boolean isWorkCreative;
 
     private String successSounds;
     private float successVolume;
@@ -51,6 +53,12 @@ public class ConfigHandler {
         // 최대 내구도일 때만 작동시킬건지 결정하는 콘피그 데이터 (기본값 true)
         isMaxDurability = config.getBoolean("options.work-only-max-dura", true);
 
+        // 인벤토리 창에서 아이템 클릭 시, 업데이트 수행하는 옵션 (기본값 true)
+        isWorkCursorClick = config.getBoolean("options.cursor-click.enable", true);
+
+        // 겜모상태에서 커서클릭 업데이트 기능 작동할지 여부를 판단하는 옵션 (기본값 false)
+        isWorkCreative = config.getBoolean("options.cursor-click.work-gamemode-creative", false);
+
         // 업데이트 성공 사운드 관련 콘피그 데이터
         successSounds = config.getString("sounds.success.sound", "ENTITY_PLAYER_LEVELUP");
         successVolume = (float)config.getDouble("sounds.success.volume", 1.0);
@@ -65,6 +73,9 @@ public class ConfigHandler {
 
 
     public boolean getIsWorkMaxDurability() { return isMaxDurability; }
+    public boolean getIsWorkCursorClick() { return isWorkCursorClick; }
+
+    public boolean getIsWorkCreative() { return isWorkCreative; }
 
     public String getSuccessSounds() {
         return successSounds;

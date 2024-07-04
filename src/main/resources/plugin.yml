@@ -8,7 +8,7 @@ softdepend: [MMOItems, NBTAPI]
 commands:
   updatemmoitems:
     description: 손에 들고있는 아이템을 업데이트합니다.
-    aliases: [ djqepdlxm(업데이트) ]
+    aliases: [ djqepdlxm(업데이트), 업데이트 ]
     permission: updatemmoitems.use
     permission-message: 권한 없음
 

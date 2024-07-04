@@ -15,6 +15,7 @@ public enum Message {
     USED_ITEM("<gold><bold>[</bold><yellow>내구도를 완전히 수리하신 후 사용해주세요."),
     NO_INVENTORY_SPACE("<gold><bold>[</bold><yellow>인벤토리에 공간이 없습니다."),
     SUCCESS_UPDATE("<white>아이템 업데이트 완료!"),
+    AUTO_UPDATE_FROM_EVENT("<white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."),
     RELOAD("<prefix><gold>config 리로드 완료.");
 
     Component message;
@@ -52,6 +53,8 @@ public enum Message {
         NO_INVENTORY_SPACE.setMessage(instance.getConfig().getString("message.no-inv-space"));
 
         SUCCESS_UPDATE.setMessage(instance.getConfig().getString("message.success-update"));
+
+        AUTO_UPDATE_FROM_EVENT.setMessage(instance.getConfig().getString("message.auto-update"));
 
         RELOAD.setMessage(instance.getConfig().getString("message.reload"));
 

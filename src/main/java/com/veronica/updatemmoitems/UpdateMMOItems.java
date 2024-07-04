@@ -3,6 +3,7 @@ package com.veronica.updatemmoitems;
 import com.veronica.updatemmoitems.command.CommandHandler;
 import com.veronica.updatemmoitems.command.sub.ReloadCommand;
 import com.veronica.updatemmoitems.config.ConfigHandler;
+import com.veronica.updatemmoitems.listener.InventoryClick;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.plugin.Plugin;
@@ -57,6 +58,9 @@ public final class UpdateMMOItems extends JavaPlugin {
 
         // 플러그인의 커맨드 등록
         registerCommands();
+
+        // 이벤트 리스너 등록
+        getServer().getPluginManager().registerEvents(new InventoryClick(), this);
     }
 
     private void registerCommands() {

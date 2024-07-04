@@ -3,6 +3,7 @@ package com.veronica.updatemmoitems.command;
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.Update;
+import com.veronica.updatemmoitems.method.sub.CheckMainHand;
 import com.veronica.updatemmoitems.permission.Permission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -40,7 +41,10 @@ public class CommandHandler implements CommandExecutor, TabExecutor {
             Player player = (Player) sender;
 
             if (player.hasPermission(Permission.USE.getPermission())){
+
+                // 업데이트 로직 수행
                 Update.updateItem(player);
+
             }
             else {
                 sender.sendMessage(miniMessage.deserialize(Message.NO_PERMISSION.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
