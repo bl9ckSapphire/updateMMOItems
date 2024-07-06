@@ -3,7 +3,6 @@ package com.veronica.updatemmoitems.command;
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.Update;
-import com.veronica.updatemmoitems.method.sub.CheckMainHand;
 import com.veronica.updatemmoitems.permission.Permission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
