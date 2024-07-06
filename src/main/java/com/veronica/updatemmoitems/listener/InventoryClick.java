@@ -18,6 +18,9 @@ public class InventoryClick implements Listener {
         // 이미 취소된 이벤트인 경우 종료
         if (event.isCancelled()) { return; }
 
+        // 모루 인벤토리에서 클릭한 경우 종료
+        if (event.getInventory().getType() == InventoryType.ANVIL) { return; }
+
         // config 에서 "work-cursor-click:" 옵션이 false 일 경우 종료
         if (!ConfigHandler.getInstance().getIsWorkCursorClick()){ return; }
 

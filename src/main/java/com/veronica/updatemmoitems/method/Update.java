@@ -3,19 +3,21 @@ package com.veronica.updatemmoitems.method;
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
+import com.veronica.updatemmoitems.method.sub.CheckGemStone;
 import com.veronica.updatemmoitems.method.sub.PlaySounds;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import java.util.HashMap;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
+
 
 import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestMMOItems;
 import static com.veronica.updatemmoitems.method.sub.GetItemsInfo.getMMOItemsInfo;
@@ -68,6 +70,7 @@ public class Update {
 
         MMOItem mmoItem = getMMOItemsInfo(targetItem);
 
+
         // MMOItems 아이템이 아닌 경우
         if (mmoItem == null) {
 
@@ -86,10 +89,26 @@ public class Update {
             return;
         }
 
+
+        // 젬스톤 적용 시 업데이트가 비활성화 상태 + 젬스톤이 적용되어있는 아이템일 때 > 종료
+        if ( !(ConfigHandler.getInstance().getIsWorkGemstoneApplied()) && (CheckGemStone.isInGemstone(targetItem)) ) {
+            if (event == null) {
+                player.sendMessage(miniMessage.deserialize(Message.DETECTED_GEMSTONE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+                PlaySounds.playSounds(player,
+                        ConfigHandler.getInstance().getFailSounds(),
+                        ConfigHandler.getInstance().getFailVolume(),
+                        ConfigHandler.getInstance().getFailPitch()
+                );
+            }
+            return;
+        }
+
+
         // updatedItem 변수에 해당 Type, ID 를 지닌 아이템 정보를 받아옴(즉, 해당 아이템의 가장 현재 정보를 받아옴)
         ItemStack updatedItem = mmoItem.newBuilder().build();
 
-        // updatedItem 이 null 일때, 즉 해당 아이템이 더 이상 존재하지 않는 MMOItems 일 때, 종료
+
+        // updatedItem 이 null 일때, 종료
         if (updatedItem == null) {
             if (event == null) {
                 player.sendMessage(miniMessage.deserialize(Message.NO_LONGER_EXISTS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
@@ -152,20 +171,51 @@ public class Update {
         if (event == null) {
             // 메인핸드에 있는 아이템의 수량을 가져옴
             int itemAmount = itemInHand.getAmount();
+
             // 메인핸드의 아이템을 제거
             player.getInventory().setItemInMainHand(null);
+
             // 업데이트된 아이템을 생성하고 수량을 설정
             ItemStack totalGiveItems = updatedItem.clone();
             totalGiveItems.setAmount(itemAmount);
+
+            // 아이템 업데이트 수행 시, 바닐라 인첸트 정보를 유지할건지 판단하는
+            // config 의 "maintaining-vanilla-enchantment-data:" 옵션이 켜져있다면 수행
+            if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()){
+
+                // 인첸트 데이터 유지하기
+                if (targetItem.hasItemMeta() && targetItem.getItemMeta().hasEnchants()) {
+                    totalGiveItems.addUnsafeEnchantments(targetItem.getEnchantments());
+                }
+
+                // RepairCost 데이터 유지하기
+                if (targetItem.hasItemMeta() && targetItem.getItemMeta() instanceof Repairable) {
+                    Repairable targetRepairable = (Repairable) targetItem.getItemMeta();
+
+                    // targetItem의 ItemMeta가 Repairable인지 확인
+                    if (totalGiveItems.hasItemMeta() && totalGiveItems.getItemMeta() instanceof Repairable) {
+                        Repairable totalGiveRepairable = (Repairable) totalGiveItems.getItemMeta();
+                        totalGiveRepairable.setRepairCost(targetRepairable.getRepairCost());
+
+                        // RepairCost 값을 totalGiveItems의 ItemMeta에 설정
+                        totalGiveItems.setItemMeta((ItemMeta) totalGiveRepairable);
+                    }
+                }
+
+            }
+
+
             // 업데이트된 아이템을 인벤토리에 추가
             inventory.addItem(totalGiveItems);
 
             // 성공 메시지 전송 (명령어 사용으로 인한 업데이트 성공 메시지 전송)
             player.sendMessage(miniMessage.deserialize(Message.SUCCESS_UPDATE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
-        }
-        // InventoryClickEvent 이벤트일 때 아이템 제거 및 지급 기능 + 전송되는 메시지
-        else {
 
+        }
+
+        // InventoryClickEvent 이벤트일 때 아이템 제거 및 지급 기능 + 전송되는 메시지
+        // 인벤토리 슬롯을 클릭했을 때 아이템 업데이트 지급 관련 기능 로직
+        else {
             // 클릭된 슬롯의 아이템을 가져옴
             ItemStack clickedItem = targetItem;
 
@@ -178,23 +228,50 @@ public class Update {
             int itemAmount = clickedItem.getAmount();
 
             // 업데이트된 아이템을 생성하고 수량을 설정
-            ItemStack updatedItemCopy = updatedItem.clone();
-            updatedItemCopy.setAmount(itemAmount);
+            ItemStack totalGiveItems = updatedItem.clone();
+            totalGiveItems.setAmount(itemAmount);
+
+
+            // 아이템 업데이트 수행 시, 바닐라 인첸트 정보를 유지할건지 판단하는
+            // config 의 "maintaining-vanilla-enchantment-data:" 옵션이 켜져있다면 수행
+            if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()){
+
+                // 인첸트 데이터 유지하기
+                if (targetItem.hasItemMeta() && targetItem.getItemMeta().hasEnchants()) {
+                    totalGiveItems.addUnsafeEnchantments(targetItem.getEnchantments());
+                }
+
+                // RepairCost 데이터 유지하기
+                if (targetItem.hasItemMeta() && targetItem.getItemMeta() instanceof Repairable) {
+                    Repairable targetRepairable = (Repairable) targetItem.getItemMeta();
+
+                    // targetItem의 ItemMeta가 Repairable인지 확인
+                    if (totalGiveItems.hasItemMeta() && totalGiveItems.getItemMeta() instanceof Repairable) {
+                        Repairable totalGiveRepairable = (Repairable) totalGiveItems.getItemMeta();
+                        totalGiveRepairable.setRepairCost(targetRepairable.getRepairCost());
+
+                        // RepairCost 값을 totalGiveItems의 ItemMeta에 설정
+                        totalGiveItems.setItemMeta((ItemMeta) totalGiveRepairable);
+                    }
+                }
+
+            }
 
             // 클릭된 슬롯에 업데이트된 아이템을 추가
-            event.getClickedInventory().setItem(event.getSlot(), updatedItemCopy);
+            event.getClickedInventory().setItem(event.getSlot(), totalGiveItems);
 
             // 손에 들고 있는 아이템을 제거
             if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) {
                 event.setCursor(null);
             }
 
+            // 성공 메시지 전송 (커서 클릭 시 업데이트 성공 메시지 전송)
+            player.sendMessage(miniMessage.deserialize(Message.AUTO_UPDATE_FROM_EVENT.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+
             // 이벤트 취소
             event.setCancelled(true);
         }
 
-        // 성공 메시지 전송 (커서 클릭 시 업데이트 성공 메시지 전송)
-        player.sendMessage(miniMessage.deserialize(Message.AUTO_UPDATE_FROM_EVENT.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
         // 성공 사운드 재생
         PlaySounds.playSounds(player,

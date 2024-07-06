@@ -10,6 +10,7 @@ public enum Message {
     NO_PLAYER("<gold><bold>[</bold><yellow>플레이어만 사용 가능한 명령어입니다."),
     IS_AIR("<gold><bold>[</bold><yellow>손에 아무것도 들고있지 않음"),
     NO_MMOITEMS("<prefix><white>올바른 아이템을 들고 시도해주세요."),
+    DETECTED_GEMSTONE("<prefix><white>올바른 아이템을 들고 시도해주세요."),
     ALREADY_LATEST("<yellow>이 명령어는 오직 플레이어를 통해서만 사용 가능합니다."),
     NO_LONGER_EXISTS("<prefix><white>더 이상 서버에 존재하지 않은 아이템입니다."),
     USED_ITEM("<gold><bold>[</bold><yellow>내구도를 완전히 수리하신 후 사용해주세요."),
@@ -43,6 +44,8 @@ public enum Message {
         IS_AIR.setMessage(instance.getConfig().getString("message.is-air"));
 
         NO_MMOITEMS.setMessage(instance.getConfig().getString("message.no-mmoitems"));
+
+        DETECTED_GEMSTONE.setMessage(instance.getConfig().getString("message.detected-gemstone"));
 
         ALREADY_LATEST.setMessage(instance.getConfig().getString("message.already-latest"));
 
