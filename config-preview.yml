@@ -4,18 +4,38 @@ options:
   # false 로 설정 시, 아이템 내구도가 깎여 있더라도 업데이트가 작동하도록 설정합니다.
   work-only-max-dura: true
 
+  # true 로 설정 시, 아이템에 젬스톤이 적용된 상태에서도 업데이트 기능을 작동시킵니다.
+  # ※주의※ 이 기능을 킨다면, 젬스톤이 적용된 아이템을 업데이트 할 시, 아이템에 적용된 젬스톤들이 사라집니다!
+  work-with-gem-stone-applied: false
+
+  # true 로 설정 시, 아이템에 적용된 인첸트를 유지한 채로 업데이트를 진행합니다.
+  maintaining-vanilla-enchantment-data: true
+  # ↑↑↑  ※ Tmi ※  ↑↑↑
+  # 모루에서 인첸트를 적용시킨 후, 해당 아이템이 한번 더 업데이트 될 수 있습니다.
+  # 이는 모루에서 아이템을 편집할 때, MMOItems 가 가진 display name 쪽 NBT 태그인
+  # "obfuscated":false, "underlined":false, "strikethrough":false 이 3가지 NBT를 제거하는 모루의 기능 때문입니다.
+  # 따라서, 모루의 편집에 의해 사라진 해당 3개의 NBT를 다시 채워주기 위해 업데이트가 진행될겁니다.
+  # 하지만 이로인해, 적용한 인첸트가 변경되는 현상 등등의 이상현상은 전혀 없습니다.
+  # 따라서, 이러한 현상은 신경쓰지 않아도 됩니다.
+
+
+  # 서버 접속 시, 플레이어의 인벤토리에 업데이트되지 않은 MMOItems를 모두 업데이트 시킵니다.
+  # true 로 설정 시, 해당 기능이 작동함
+  join-update: false
 
   # ↓ 인벤토리 창에서 아이템을 클릭했을 때의 업데이트 작동 옵션입니다.
   cursor-click:
     # true 로 설정 시, 인벤토리 창에서 아이템을 클릭하면 업데이트가 수행됩니다.
     # false 로 설정 시, 해당 기능을 비활성화합니다.
     # 다른 플러그인의 GUI 창에서 MMOItems 가 쓰이는 경우를 대비해서, 클릭이벤트가 취소된 경우에는 동작하지 않도록 설계했습니다.
-    enable: true
+    enable: false
 
     # 게임모드(크리에이티브 모드) 에서 작동할지 여부입니다.
     # 게임모드 상태에서는, 업데이트 되기 전의 아이템이 사라지지 않습니다. (업데이트된 새로운 아이템은 지급됨)
     # true 로 설정 시, 크리에이티브 모드 상태에서도 커서클릭 업데이트 기능이 작동합니다.
     work-gamemode-creative: false
+
+
 
 
 
@@ -42,12 +62,13 @@ message:
   no-player: "<prefix><white>플레이어 개체만 해당 명령어를 사용할 수 있습니다."
   is-air: "<prefix><b><color:#4affb4>오른손</color></b><white>에 아이템을 들고 시도해주세요"
   no-mmoitems: "<prefix><white>업데이트 가능한 아이템이 아닙니다."
+  detected-gemstone: "<prefix><white>아이템에 장착된 젬스톤을 제거 후 시도해주세요."
   already-latest: "<prefix><white>이미 최신화된 아이템입니다."
-  no-longer-exists: "<prefix><white>업데이트 실패 <gray>(더 이상 서버에 존재하지 않는 아이템입니다.)"
   used-item: "<prefix><white>내구도를 완전히 수리하신 후 시도해주세요."
   no-inv-space: "<prefix><white>인벤토리를 최소 1칸 이상 비워두고 시도해주세요."
   success-update: "<prefix><gradient:#ff4400:#73ff00>업데이트 완료 !</gradient>"
   auto-update: "<prefix><white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."
+  join-update: "<prefix><white>인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
   reload: "<prefix><gold>콘피그 리로드 완료 !"
 
 
