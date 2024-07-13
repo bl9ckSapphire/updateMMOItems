@@ -19,12 +19,16 @@ options:
   # 따라서, 이러한 현상은 신경쓰지 않아도 됩니다.
 
 
+  # 서버 접속 시, 해당 플레이어의 인벤토리에 존재하는, 최신화되지 않은 MMOItems 를 찾고 업데이트시킵니다.
+  # true 로 설정 시, 해당 기능이 작동함
+  join-update: false
+
   # ↓ 인벤토리 창에서 아이템을 클릭했을 때의 업데이트 작동 옵션입니다.
   cursor-click:
     # true 로 설정 시, 인벤토리 창에서 아이템을 클릭하면 업데이트가 수행됩니다.
     # false 로 설정 시, 해당 기능을 비활성화합니다.
     # 다른 플러그인의 GUI 창에서 MMOItems 가 쓰이는 경우를 대비해서, 클릭이벤트가 취소된 경우에는 동작하지 않도록 설계했습니다.
-    enable: true
+    enable: false
 
     # 게임모드(크리에이티브 모드) 에서 작동할지 여부입니다.
     # 게임모드 상태에서는, 업데이트 되기 전의 아이템이 사라지지 않습니다. (업데이트된 새로운 아이템은 지급됨)
@@ -60,11 +64,11 @@ message:
   no-mmoitems: "<prefix><white>업데이트 가능한 아이템이 아닙니다."
   detected-gemstone: "<prefix><white>아이템에 장착된 젬스톤을 제거 후 시도해주세요."
   already-latest: "<prefix><white>이미 최신화된 아이템입니다."
-  no-longer-exists: "<prefix><white>업데이트 실패 <gray>(더 이상 서버에 존재하지 않는 아이템입니다.)"
   used-item: "<prefix><white>내구도를 완전히 수리하신 후 시도해주세요."
   no-inv-space: "<prefix><white>인벤토리를 최소 1칸 이상 비워두고 시도해주세요."
   success-update: "<prefix><gradient:#ff4400:#73ff00>업데이트 완료 !</gradient>"
   auto-update: "<prefix><white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."
+  join-update: "<prefix><white>인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
   reload: "<prefix><gold>콘피그 리로드 완료 !"
 
 

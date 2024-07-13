@@ -7,13 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
-public class InventoryClick implements Listener {
+public class InventoryClickEvent implements Listener {
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
+    public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
 
         // 이미 취소된 이벤트인 경우 종료
         if (event.isCancelled()) { return; }

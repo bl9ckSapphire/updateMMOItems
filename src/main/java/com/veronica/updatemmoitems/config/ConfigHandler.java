@@ -18,6 +18,8 @@ public class ConfigHandler {
     private boolean isWorkCreative;
     private boolean isWorkGemstoneApplied;
 
+    private boolean isWorkJoinUpdate;
+
     private String successSounds;
     private float successVolume;
     private float successPitch;
@@ -57,8 +59,8 @@ public class ConfigHandler {
         // 최대 내구도일 때만 작동시킬건지 결정하는 콘피그 데이터 (기본값 true)
         isMaxDurability = config.getBoolean("options.work-only-max-dura", true);
 
-        // 인벤토리 창에서 아이템 클릭 시, 업데이트 수행하는 옵션 (기본값 true)
-        isWorkCursorClick = config.getBoolean("options.cursor-click.enable", true);
+        // 인벤토리 창에서 아이템 클릭 시, 업데이트 수행하는 옵션 (기본값 false)
+        isWorkCursorClick = config.getBoolean("options.cursor-click.enable", false);
 
         // 업데이트 진행 시, 아이템에 발려진 바닐라 인첸트 데이터를 유지할건지 판단하는 옵션(기본값 true)
         isMaintainingVanillaEnchantment = config.getBoolean("options.maintaining-vanilla-enchantment-data", true);
@@ -68,6 +70,9 @@ public class ConfigHandler {
 
         // 젬스톤이 박혀있는 상태에서도 업데이트 작동할지 판단하는 옵션 (기본값 false)
         isWorkGemstoneApplied = config.getBoolean("options.work-with-gem-stone-applied", false);
+
+        // 서버 접속 시, 인벤토리에 있는 아이템들을 자동으로 업데이트 할 건지 판단하는 옵션 (기본값 false)
+        isWorkJoinUpdate = config.getBoolean("options.join-update", false);
 
         // 업데이트 성공 사운드 관련 콘피그 데이터
         successSounds = config.getString("sounds.success.sound", "ENTITY_PLAYER_LEVELUP");
@@ -90,6 +95,8 @@ public class ConfigHandler {
     public boolean getIsWorkGemstoneApplied() { return isWorkGemstoneApplied; }
 
     public boolean getIsWorkCreative() { return isWorkCreative; }
+
+    public boolean getIsWorkJoinUpdate() { return isWorkJoinUpdate; }
 
     public String getSuccessSounds() {
         return successSounds;

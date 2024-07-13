@@ -5,6 +5,8 @@ import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.sub.CheckGemStone;
 import com.veronica.updatemmoitems.method.sub.PlaySounds;
+import com.veronica.updatemmoitems.method.sub.UpgradeData;
+import com.veronica.updatemmoitems.method.sub.EnchantData;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -15,8 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.Repairable;
 
 
 import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestMMOItems;
@@ -108,19 +108,6 @@ public class Update {
         ItemStack updatedItem = mmoItem.newBuilder().build();
 
 
-        // updatedItem 이 null 일때, 종료
-        if (updatedItem == null) {
-            if (event == null) {
-                player.sendMessage(miniMessage.deserialize(Message.NO_LONGER_EXISTS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
-                PlaySounds.playSounds(player,
-                        ConfigHandler.getInstance().getFailSounds(),
-                        ConfigHandler.getInstance().getFailVolume(),
-                        ConfigHandler.getInstance().getFailPitch()
-                );
-            }
-            return;
-        }
-
         // 1. 내구도가 존재하는 아이템인지 확인
         // 2. 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
         // 3. 동시에 config 설정에서, "work-only-max-dura" 설정을 true 로 활성화 했을 경우
@@ -172,38 +159,20 @@ public class Update {
             // 메인핸드에 있는 아이템의 수량을 가져옴
             int itemAmount = itemInHand.getAmount();
 
-            // 메인핸드의 아이템을 제거
-            player.getInventory().setItemInMainHand(null);
-
-            // 업데이트된 아이템을 생성하고 수량을 설정
+            // 업데이트된 아이템을 생성
             ItemStack totalGiveItems = updatedItem.clone();
+
+            // 업그레이드 데이터 적용
+            // totalGiveItems = UpgradeData.setUpgradeData(mmoItem, totalGiveItems);
+
+            // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
 
-            // 아이템 업데이트 수행 시, 바닐라 인첸트 정보를 유지할건지 판단하는
-            // config 의 "maintaining-vanilla-enchantment-data:" 옵션이 켜져있다면 수행
-            if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()){
+            // 바닐라 인첸트데이터 존재 시, 해당 데이터 유지
+            totalGiveItems = EnchantData.setEnchantData(targetItem, totalGiveItems);
 
-                // 인첸트 데이터 유지하기
-                if (targetItem.hasItemMeta() && targetItem.getItemMeta().hasEnchants()) {
-                    totalGiveItems.addUnsafeEnchantments(targetItem.getEnchantments());
-                }
-
-                // RepairCost 데이터 유지하기
-                if (targetItem.hasItemMeta() && targetItem.getItemMeta() instanceof Repairable) {
-                    Repairable targetRepairable = (Repairable) targetItem.getItemMeta();
-
-                    // targetItem의 ItemMeta가 Repairable인지 확인
-                    if (totalGiveItems.hasItemMeta() && totalGiveItems.getItemMeta() instanceof Repairable) {
-                        Repairable totalGiveRepairable = (Repairable) totalGiveItems.getItemMeta();
-                        totalGiveRepairable.setRepairCost(targetRepairable.getRepairCost());
-
-                        // RepairCost 값을 totalGiveItems의 ItemMeta에 설정
-                        totalGiveItems.setItemMeta((ItemMeta) totalGiveRepairable);
-                    }
-                }
-
-            }
-
+            // 메인핸드의 아이템을 제거
+            player.getInventory().setItemInMainHand(null);
 
             // 업데이트된 아이템을 인벤토리에 추가
             inventory.addItem(totalGiveItems);
@@ -227,35 +196,17 @@ public class Update {
             // 클릭된 아이템의 수량을 가져옴
             int itemAmount = clickedItem.getAmount();
 
-            // 업데이트된 아이템을 생성하고 수량을 설정
+            // 업데이트된 아이템을 생성
             ItemStack totalGiveItems = updatedItem.clone();
+
+            // 업그레이드 데이터 적용
+            // totalGiveItems = UpgradeData.setUpgradeData(mmoItem, totalGiveItems);
+
+            // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
 
-
-            // 아이템 업데이트 수행 시, 바닐라 인첸트 정보를 유지할건지 판단하는
-            // config 의 "maintaining-vanilla-enchantment-data:" 옵션이 켜져있다면 수행
-            if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()){
-
-                // 인첸트 데이터 유지하기
-                if (targetItem.hasItemMeta() && targetItem.getItemMeta().hasEnchants()) {
-                    totalGiveItems.addUnsafeEnchantments(targetItem.getEnchantments());
-                }
-
-                // RepairCost 데이터 유지하기
-                if (targetItem.hasItemMeta() && targetItem.getItemMeta() instanceof Repairable) {
-                    Repairable targetRepairable = (Repairable) targetItem.getItemMeta();
-
-                    // targetItem의 ItemMeta가 Repairable인지 확인
-                    if (totalGiveItems.hasItemMeta() && totalGiveItems.getItemMeta() instanceof Repairable) {
-                        Repairable totalGiveRepairable = (Repairable) totalGiveItems.getItemMeta();
-                        totalGiveRepairable.setRepairCost(targetRepairable.getRepairCost());
-
-                        // RepairCost 값을 totalGiveItems의 ItemMeta에 설정
-                        totalGiveItems.setItemMeta((ItemMeta) totalGiveRepairable);
-                    }
-                }
-
-            }
+            // 바닐라 인첸트데이터 존재 시, 해당 데이터 유지
+            totalGiveItems = EnchantData.setEnchantData(targetItem, totalGiveItems);
 
             // 클릭된 슬롯에 업데이트된 아이템을 추가
             event.getClickedInventory().setItem(event.getSlot(), totalGiveItems);
