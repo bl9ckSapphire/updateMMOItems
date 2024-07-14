@@ -38,6 +38,23 @@ options:
 
 
 
+# 화이트리스트를 설정하여, 업데이트가 가능한 MMOItems 의 type 을 제한할 수 있습니다.
+whitelist:
+
+  # true로 설정 시, 아래에 작성된 MMOItems 타입의 아이템만 업데이트가 가능하도록 제한합니다.
+  enable: false
+
+  # 화이트리스트 옵션 활성화 시, 아래에 적힌 type의 아이템만이 업데이트가 가능합니다.
+  type-list:
+    - SWORD
+    - CONSUMABLE
+    - BOW
+    - ARMOR
+    - ACCESSORY
+
+
+
+
 
 # 업데이트 수행 시 재생되는 사운드
 sounds:
@@ -51,6 +68,8 @@ sounds:
     sound: "BLOCK_NOTE_BLOCK_COW_BELL"
     volume: 0.9
     pitch: 0.1
+
+
 
 
 
@@ -69,6 +88,7 @@ message:
   success-update: "<prefix><gradient:#ff4400:#73ff00>업데이트 완료 !</gradient>"
   auto-update: "<prefix><white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."
   join-update: "<prefix><white>인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
+  no-whitelist-items: "<prefix><white>업데이트가 허용되지 않은 타입의 아이템입니다."
   reload: "<prefix><gold>콘피그 리로드 완료 !"
 
 

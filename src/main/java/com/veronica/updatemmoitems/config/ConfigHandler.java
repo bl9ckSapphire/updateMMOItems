@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import java.io.File;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class ConfigHandler {
@@ -12,13 +13,15 @@ public class ConfigHandler {
     private final FileConfiguration config;
     private boolean isMaxDurability;
     private boolean isWorkCursorClick;
-
     private boolean isMaintainingVanillaEnchantment;
-
     private boolean isWorkCreative;
     private boolean isWorkGemstoneApplied;
-
     private boolean isWorkJoinUpdate;
+
+    private boolean isWorkWhitelist;
+
+    private List<String> whitelistTypeList;
+
 
     private String successSounds;
     private float successVolume;
@@ -74,6 +77,13 @@ public class ConfigHandler {
         // 서버 접속 시, 인벤토리에 있는 아이템들을 자동으로 업데이트 할 건지 판단하는 옵션 (기본값 false)
         isWorkJoinUpdate = config.getBoolean("options.join-update", false);
 
+        // 업데이트 가능한 아이템 type 화이트리스트 옵션의 활성화 비활성화 여부 판단 (기본값 false)
+        isWorkWhitelist = config.getBoolean("whitelist.enable", false);
+
+        // 화이트리스트에 작성된 아이템 type 들의 값을 가져옴
+        whitelistTypeList = config.getStringList("whitelist.type-list");
+
+
         // 업데이트 성공 사운드 관련 콘피그 데이터
         successSounds = config.getString("sounds.success.sound", "ENTITY_PLAYER_LEVELUP");
         successVolume = (float)config.getDouble("sounds.success.volume", 1.0);
@@ -85,18 +95,15 @@ public class ConfigHandler {
         failPitch = (float)config.getDouble("sounds.fail.pitch", 1.0);
     }
 
-
-
     public boolean getIsWorkMaxDurability() { return isMaxDurability; }
     public boolean getIsWorkCursorClick() { return isWorkCursorClick; }
-
     public boolean getIsMaintainingVanillaEnchantment() { return isMaintainingVanillaEnchantment; }
-
     public boolean getIsWorkGemstoneApplied() { return isWorkGemstoneApplied; }
-
     public boolean getIsWorkCreative() { return isWorkCreative; }
-
     public boolean getIsWorkJoinUpdate() { return isWorkJoinUpdate; }
+    public boolean getIsWorkWhitelist() { return isWorkWhitelist; }
+    public List<String> getWhitelistTypeList() { return whitelistTypeList; }
+
 
     public String getSuccessSounds() {
         return successSounds;

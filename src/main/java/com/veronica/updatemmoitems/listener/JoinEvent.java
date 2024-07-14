@@ -5,6 +5,8 @@ import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.sub.CheckGemStone;
 import com.veronica.updatemmoitems.method.sub.EnchantData;
+import com.veronica.updatemmoitems.method.sub.PlaySounds;
+import com.veronica.updatemmoitems.method.sub.Whitelist;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -70,6 +72,10 @@ public class JoinEvent implements Listener {
             if (isLatest) {
                 continue;
             }
+
+            // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
+            // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), continue
+            if (!Whitelist.whitelistCheck(targetItem, player)){ continue; }
 
             // 인벤토리 슬롯에 있는 아이템의 수량을 가져옴
             int itemAmount = targetItem.getAmount();

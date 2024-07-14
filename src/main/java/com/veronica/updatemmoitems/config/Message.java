@@ -17,6 +17,7 @@ public enum Message {
     SUCCESS_UPDATE("<white>아이템 업데이트 완료!"),
     AUTO_UPDATE_FROM_EVENT("<white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."),
     UPDATE_JOIN_EVENT("<white>변경사항이 존재하는 인벤토리 내부의 아이템들이 업데이트됨."),
+    NO_WHITELIST_ITEMS("<white>업데이트가 허용되지 않은 타입의 아이템입니다."),
     RELOAD("<prefix><gold>config 리로드 완료.");
 
     Component message;
@@ -58,6 +59,8 @@ public enum Message {
         AUTO_UPDATE_FROM_EVENT.setMessage(instance.getConfig().getString("message.auto-update"));
 
         UPDATE_JOIN_EVENT.setMessage(instance.getConfig().getString("message.join-update"));
+
+        NO_WHITELIST_ITEMS.setMessage(instance.getConfig().getString("message.no-whitelist-items"));
 
         RELOAD.setMessage(instance.getConfig().getString("message.reload"));
 

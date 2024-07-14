@@ -3,10 +3,7 @@ package com.veronica.updatemmoitems.method;
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
-import com.veronica.updatemmoitems.method.sub.CheckGemStone;
-import com.veronica.updatemmoitems.method.sub.PlaySounds;
-import com.veronica.updatemmoitems.method.sub.UpgradeData;
-import com.veronica.updatemmoitems.method.sub.EnchantData;
+import com.veronica.updatemmoitems.method.sub.*;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -67,13 +64,10 @@ public class Update {
             return;
         }
 
-
         MMOItem mmoItem = getMMOItemsInfo(targetItem);
-
 
         // MMOItems 아이템이 아닌 경우
         if (mmoItem == null) {
-
             // PlayerInteractEvent, InventoryClickEvent 가 아닌경우 "메시지+사운드" 를 재생 & 출력
             // 만약 이런 이벤트 수행중에도 메시지가 전송된다면 채팅창이 메시지로 도배될 것임.
             // 따라서 이벤트로 수행되는것이 아닌, "/업데이트" 명령어 사용 시에만 실패 메시지가 전송되도록
@@ -85,10 +79,22 @@ public class Update {
                         ConfigHandler.getInstance().getFailPitch()
                 );
             }
-
             return;
         }
 
+        // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
+        // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), 해당 if 블록안의 코드가 수행됨
+        if (!Whitelist.whitelistCheck(targetItem, player)){
+            if (event == null) {
+                player.sendMessage(miniMessage.deserialize(Message.NO_WHITELIST_ITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+                PlaySounds.playSounds(player,
+                        ConfigHandler.getInstance().getFailSounds(),
+                        ConfigHandler.getInstance().getFailVolume(),
+                        ConfigHandler.getInstance().getFailPitch()
+                );
+            }
+            return;
+        }
 
         // 젬스톤 적용 시 업데이트가 비활성화 상태 + 젬스톤이 적용되어있는 아이템일 때 > 종료
         if ( !(ConfigHandler.getInstance().getIsWorkGemstoneApplied()) && (CheckGemStone.isInGemstone(targetItem)) ) {
