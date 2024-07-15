@@ -84,7 +84,7 @@ public class Update {
 
         // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
         // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), 해당 if 블록안의 코드가 수행됨
-        if (!Whitelist.whitelistCheck(targetItem, player)){
+        if (!Whitelist.whitelistCheck(targetItem)){
             if (event == null) {
                 player.sendMessage(miniMessage.deserialize(Message.NO_WHITELIST_ITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
                 PlaySounds.playSounds(player,

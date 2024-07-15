@@ -52,6 +52,10 @@ public class JoinEvent implements Listener {
             // MMOItems 아이템이 아닌 경우, 현재 슬롯 건너뜀
             if (mmoItem == null) { continue; }
 
+            // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
+            // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), continue
+            if (!Whitelist.whitelistCheck(targetItem)){ continue; }
+
             // updatedItem 변수에 해당 Type, ID 를 지닌 아이템 정보를 받아옴(즉, 해당 아이템의 가장 현재 정보를 받아옴)
             ItemStack updatedItem = mmoItem.newBuilder().build();
 
@@ -72,10 +76,6 @@ public class JoinEvent implements Listener {
             if (isLatest) {
                 continue;
             }
-
-            // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
-            // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), continue
-            if (!Whitelist.whitelistCheck(targetItem, player)){ continue; }
 
             // 인벤토리 슬롯에 있는 아이템의 수량을 가져옴
             int itemAmount = targetItem.getAmount();

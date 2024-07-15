@@ -104,7 +104,6 @@ public class ConfigHandler {
     public boolean getIsWorkWhitelist() { return isWorkWhitelist; }
     public List<String> getWhitelistTypeList() { return whitelistTypeList; }
 
-
     public String getSuccessSounds() {
         return successSounds;
     }

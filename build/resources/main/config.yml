@@ -45,12 +45,18 @@ whitelist:
   enable: false
 
   # 화이트리스트 옵션 활성화 시, 아래에 적힌 type의 아이템만이 업데이트가 가능합니다.
+  # 콜론(:) 을 기준으로, 오른쪽에 "*" 를 작성하면, 해당 Type의 모든 아이템을 화이트리스트에 등록한다는 뜻입니다.
   type-list:
-    - SWORD
-    - CONSUMABLE
-    - BOW
-    - ARMOR
-    - ACCESSORY
+    # ↓ 아래 리스트는 예시로 작성한 whitelist 입니다
+    - CONSUMABLE:* # <<< "*" 를 작성했으니, CONSUMABLE 타입의 모든 MMOItems를 화이트리스트로 등록
+    - SWORD:초심자의_단검  # <<< SWORD 타입이면서, "초심자의_단검" 이라는 ID 를 가진 아이템을 화이트리스트로 등록
+    - SWORD:강철_검
+    - BOW:단단한_활
+    - BOW:세계수의_잔해
+    - ARMOR:초심자의_흉갑
+    - ARMOR:SHADOWROBE
+    - ACCESSORY:미스릴_반지
+    - ACCESSORY:문라이트_반지
 
 
 
