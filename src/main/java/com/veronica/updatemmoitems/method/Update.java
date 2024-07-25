@@ -96,6 +96,19 @@ public class Update {
             return;
         }
 
+        // 업그레이드 가능한 아이템의 업데이트 기능이 비활성화 상태 + 업그레이드가 1강이라도 적용된 경우 > 종료
+        if ( !(ConfigHandler.getInstance().getIsWorkUpgradableItems()) && (CheckUpgrade.isUpgradingItems(targetItem)) ) {
+            if (event == null) {
+                player.sendMessage(miniMessage.deserialize(Message.UPGRADABLE_ITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+                PlaySounds.playSounds(player,
+                        ConfigHandler.getInstance().getFailSounds(),
+                        ConfigHandler.getInstance().getFailVolume(),
+                        ConfigHandler.getInstance().getFailPitch()
+                );
+            }
+            return;
+        }
+
         // 젬스톤 적용 시 업데이트가 비활성화 상태 + 젬스톤이 적용되어있는 아이템일 때 > 종료
         if ( !(ConfigHandler.getInstance().getIsWorkGemstoneApplied()) && (CheckGemStone.isInGemstone(targetItem)) ) {
             if (event == null) {
@@ -131,8 +144,7 @@ public class Update {
         }
 
         // 이미 최신화된 아이템일 경우, 종료
-        boolean isLatest = isLatestMMOItems(targetItem, updatedItem);
-        if (isLatest) {
+        if (isLatestMMOItems(targetItem, updatedItem)) {
             if (event == null) {
                 player.sendMessage(miniMessage.deserialize(Message.ALREADY_LATEST.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
                 PlaySounds.playSounds(player,
@@ -144,6 +156,7 @@ public class Update {
 
             return;
         }
+
 
         // 인벤토리에 빈 공간이 있는지 확인 (InventoryClickEvent일 때는 확인하지 않음)
         if (!(event instanceof InventoryClickEvent) && inventory.firstEmpty() == -1) {
@@ -168,13 +181,10 @@ public class Update {
             // 업데이트된 아이템을 생성
             ItemStack totalGiveItems = updatedItem.clone();
 
-            // 업그레이드 데이터 적용
-            // totalGiveItems = UpgradeData.setUpgradeData(mmoItem, totalGiveItems);
-
             // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
 
-            // 바닐라 인첸트데이터 존재 시, 해당 데이터 유지
+            // 바닐라 인첸트데이터 및 AdvancedEnchantments 인첸트가 존재 시, 해당 데이터 유지
             totalGiveItems = EnchantData.setEnchantData(targetItem, totalGiveItems);
 
             // 메인핸드의 아이템을 제거
@@ -205,9 +215,6 @@ public class Update {
             // 업데이트된 아이템을 생성
             ItemStack totalGiveItems = updatedItem.clone();
 
-            // 업그레이드 데이터 적용
-            // totalGiveItems = UpgradeData.setUpgradeData(mmoItem, totalGiveItems);
-
             // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
 
@@ -223,7 +230,7 @@ public class Update {
             }
 
             // 성공 메시지 전송 (커서 클릭 시 업데이트 성공 메시지 전송)
-            player.sendMessage(miniMessage.deserialize(Message.AUTO_UPDATE_FROM_EVENT.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+            player.sendMessage(miniMessage.deserialize(Message.CURSOR_CLICK_UPDATE.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
             // 이벤트 취소
             event.setCancelled(true);

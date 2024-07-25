@@ -1,7 +1,9 @@
 package com.veronica.updatemmoitems;
 
 import com.veronica.updatemmoitems.command.CommandHandler;
+import com.veronica.updatemmoitems.command.sub.InvUpdateCommand;
 import com.veronica.updatemmoitems.command.sub.ReloadCommand;
+import com.veronica.updatemmoitems.config.AliasesHandler;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.listener.InventoryClickEvent;
 import com.veronica.updatemmoitems.listener.JoinEvent;
@@ -10,6 +12,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class UpdateMMOItems extends JavaPlugin {
@@ -41,7 +44,15 @@ public final class UpdateMMOItems extends JavaPlugin {
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "--------------------------------------");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "MMOItems, NBT-API 감지됨. 활성화 완료");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "updateMMOItems 활성화");
+
+            Plugin aePlugin = getServer().getPluginManager().getPlugin("AdvancedEnchantments");
+            if (aePlugin != null && aePlugin.isEnabled()) {
+                getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.AQUA + "부가적으로, AdvancedEnchantments 감지됨.");
+            }
+
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "--------------------------------------");
+
+
         } else {
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.RED + "--------------------------------------------------");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.RED + "작동하려면 MMOItems, NBT-API 플러그인이 필요합니다.");
@@ -51,14 +62,23 @@ public final class UpdateMMOItems extends JavaPlugin {
             return;
         }
 
+
+
+        // updatemmoitems 는 plugin.yml 에 작성된 command 와 동일하게 되어야 함
+        Objects.requireNonNull(this.getCommand("updatemmoitems")).setExecutor(new CommandHandler());
+
         // config.yml 파일을 플러그인 폴더에 생성하는 bukkitAPI (폴더에 config.yml이 존재하지 안은 경우에만 생성)
         this.saveDefaultConfig();
+
+        // 플러그인의 커맨드 등록
+        registerCommands();
 
         // ConfigHandler 클래스에 구현해 둔 config 정보 리로드 메서드
         ConfigHandler.getInstance().reloadConfigOptions();
 
-        // 플러그인의 커맨드 등록
-        registerCommands();
+        // AliasesHandler 클래스에 구현해 둔 aliases 정보 리로드 및 명령어 별칭으로 서버에 등록
+        AliasesHandler.getInstance().reloadAliasesConfig();
+        AliasesHandler.getInstance().applyAliasesToCommand();
 
         // 이벤트 리스너 등록
         getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);
@@ -66,14 +86,10 @@ public final class UpdateMMOItems extends JavaPlugin {
     }
 
     private void registerCommands() {
-        // CommandHandler 인스턴스 생성
-        CommandHandler commandHandler = new CommandHandler();
+        // 탭 자동완성 리스트 등록
+        CommandHandler.subcommandList.put("reload", new ReloadCommand());
+        CommandHandler.subcommandList.put("인벤토리", new InvUpdateCommand());
 
-        // 플러그인의 커맨드 등록
-        commandHandler.registerSubCommand("reload", new ReloadCommand());
-
-        // PluginManager에 CommandExecutor로 등록
-        getCommand("updatemmoitems").setExecutor(commandHandler);
     }
 
     // nbtapi(NBTAPI) 는 getServer().getPluginManager().getPlugin() 으로 name 을 받아오는 과정에 하자가 있음

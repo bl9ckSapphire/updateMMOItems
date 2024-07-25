@@ -5,8 +5,13 @@ options:
   work-only-max-dura: true
 
   # true 로 설정 시, 아이템에 젬스톤이 적용된 상태에서도 업데이트 기능을 작동시킵니다.
-  # ※주의※ 이 기능을 킨다면, 젬스톤이 적용된 아이템을 업데이트 할 시, 아이템에 적용된 젬스톤들이 사라집니다!
+  # ※주의※ 활성화 시, 젬스톤이 적용된 아이템을 업데이트 할 때 아이템에 적용된 젬스톤들이 사라집니다.
   work-with-gem-stone-applied: false
+
+
+  # true 로 설정 시, 업그레이드된 아이템 또한 업데이트 가능하도록 합니다.
+  # ※주의※ 활성화 시, 업그레이드된 아이템을 업데이트할 때 아이템에 적용되어있는 업그레이드 데이터가 사라집니다.
+  work-upgrading-items: false
 
   # true 로 설정 시, 아이템에 적용된 인첸트를 유지한 채로 업데이트를 진행합니다.
   maintaining-vanilla-enchantment-data: true
@@ -17,6 +22,10 @@ options:
   # 따라서, 모루의 편집에 의해 사라진 해당 3개의 NBT를 다시 채워주기 위해 업데이트가 진행될겁니다.
   # 하지만 이로인해, 적용한 인첸트가 변경되는 현상 등등의 이상현상은 전혀 없습니다.
   # 따라서, 이러한 현상은 신경쓰지 않아도 됩니다.
+
+
+  # true 로 설정 시, 아이템에 적용된 AdvancedEnchantments 플러그인의 커스텀 인첸트를 유지한 채로 업데이트를 진행합니다.
+  maintaining-advanced-enchantments: true
 
 
   # 서버 접속 시, 플레이어의 인벤토리에 업데이트되지 않은 MMOItems를 모두 업데이트 시킵니다.
@@ -34,7 +43,6 @@ options:
     # 게임모드 상태에서는, 업데이트 되기 전의 아이템이 사라지지 않습니다. (업데이트된 새로운 아이템은 지급됨)
     # true 로 설정 시, 크리에이티브 모드 상태에서도 커서클릭 업데이트 기능이 작동합니다.
     work-gamemode-creative: false
-
 
 
 
@@ -87,23 +95,40 @@ message:
   no-player: "<prefix><white>플레이어 개체만 해당 명령어를 사용할 수 있습니다."
   is-air: "<prefix><b><color:#4affb4>오른손</color></b><white>에 아이템을 들고 시도해주세요"
   no-mmoitems: "<prefix><white>업데이트 가능한 아이템이 아닙니다."
+  upgrading-items: "<prefix><white>업그레이드가 적용된 아이템은 업데이트가 불가합니다."
   detected-gemstone: "<prefix><white>아이템에 장착된 젬스톤을 제거 후 시도해주세요."
   already-latest: "<prefix><white>이미 최신화된 아이템입니다."
   used-item: "<prefix><white>내구도를 완전히 수리하신 후 시도해주세요."
   no-inv-space: "<prefix><white>인벤토리를 최소 1칸 이상 비워두고 시도해주세요."
   success-update: "<prefix><gradient:#ff4400:#73ff00>업데이트 완료 !</gradient>"
-  auto-update: "<prefix><white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."
-  join-update: "<prefix><white>인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
+  cursor-click-update: "<prefix><white>변경사항이 감지되어 해당 아이템이 업데이트 되었습니다."
+  inv-update-self: "<prefix><white>인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
+  inv-update-other: "<prefix><yellow><player><white>님의 인벤토리에 업데이트 되지않은 <yellow><amount><white>개의 아이템을 모두 업데이트 시켰습니다."
+  inv-already-all-updated: "<prefix><white>이미 인벤토리의 모든 아이템이 최신 상태입니다."
+  inv-already-all-updated-other: "<prefix><yellow><player><white>님은 이미 인벤토리의 모든 아이템이 최신 상태입니다."
+  inv-update-notification: "<prefix><white>관리자에 의해, 내 인벤토리에 있는 <yellow><amount><white>개의 아이템이 업데이트 되었습니다."
+  invaild-player: "<prefix><yellow><player><white>은(는) 없는 플레이어입니다."
+  invaild-args: "<prefix><white>사용법 : <yellow>/업데이트 인벤토리 <white>또는 <yellow>/업데이트"
   no-whitelist-items: "<prefix><white>업데이트가 허용되지 않은 타입의 아이템입니다."
   reload: "<prefix><gold>콘피그 리로드 완료 !"
 
 
 
-
 # ================================= 펄미션 관련 TMI =================================
 
-# updatemmoitems.use = 업데이트 명령어 사용을위한 펄미션 (기본적으로 모든 유저가 사용가능하도록 설계했습니다.)
+# 기본적인 "/업데이트" 명령어 사용을위한 펄미션 (기본값으로 모든 유저가 사용가능하도록 설계했습니다.)
+# updatemmoitems.command.use
 
-# updatemmoitems.reload = 콘피그파일 리로드 사용권한 (기본적으로 OP만 사용가능하도록 설계했습니다.)
+
+# 콘피그파일 리로드 사용권한 (기본값으로 OP만 사용가능하도록 설계했습니다.)
+# updatemmoitems.command.reload
+
+
+# "/업데이트 인벤토리" 로 본인의 인벤토리에 있는 아이템을 모두 업데이드 할 수 있는 권한 (기본값으로 모든 유저가 사용가능하도록 설계했습니다.)
+# updatemmoitems.command.inventory.self
+
+
+# "/업데이트 인벤토리 <플레이어>" 로 타인의 인벤토리 아이템을 모두 업데이드 할 수 있는 권한 (기본값으로 OP만 사용가능하도록 설계했습니다.)
+# updatemmoitems.command.inventory.other
 
 # =================================================================================

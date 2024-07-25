@@ -1,45 +1,34 @@
 package com.veronica.updatemmoitems.method.sub;
 
 import com.veronica.updatemmoitems.config.ConfigHandler;
+import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class CheckLatest {
 
-    // 아이템 정보를 비교하는 메서드
-    // 즉, 해당 아이템이 이미 최신화된 상태인지를 비교
     public static boolean isLatestMMOItems(ItemStack item1, ItemStack item2) {
         if (item1 == null || item2 == null) {
             return false;
         }
 
-        // 아이템의 종류(Material) 비교
         if (item1.getType() != item2.getType()) {
             return false;
         }
 
-        // 아이템의 NBT 데이터 비교
         NBTItem nbtItem1 = new NBTItem(item1);
         NBTItem nbtItem2 = new NBTItem(item2);
 
-        // 아이템 업데이트 수행 시, 바닐라 인첸트 정보를 유지할건지 판단하는
-        // config 의 "maintaining-vanilla-enchantment-data:" 옵션이 켜져있다면 수행
-        if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()){
+        //특정 nbt 태그 제거 후 비교
+        removeSpecificNBTTags(nbtItem1);
+        removeSpecificNBTTags(nbtItem2);
 
-            // 여기서는 바닐라 인첸트 시 붙는 태그 (Enchantments, RepairCost) 를 제거하여 비교
-            nbtItem1.removeKey("Enchantments");
-            nbtItem1.removeKey("RepairCost");
-            nbtItem2.removeKey("Enchantments");
-            nbtItem2.removeKey("RepairCost");
-        }
-
-        // 제거된 후에 NBT 데이터 비교
         if (!nbtItem1.toString().equals(nbtItem2.toString())) {
             return false;
         }
 
-        // 아이템의 메타 데이터 비교
         ItemMeta meta1 = item1.getItemMeta();
         ItemMeta meta2 = item2.getItemMeta();
 
@@ -47,20 +36,49 @@ public class CheckLatest {
             return meta1 == meta2;
         }
 
-        // 바닐라 인첸트 태그를 제외한 NBT 데이터로 비교
         NBTItem metaNBTItem1 = new NBTItem(new ItemStack(item1.getType()));
         NBTItem metaNBTItem2 = new NBTItem(new ItemStack(item2.getType()));
 
         metaNBTItem1.mergeCompound(nbtItem1);
         metaNBTItem2.mergeCompound(nbtItem2);
 
-        metaNBTItem1.removeKey("Enchantments");
-        metaNBTItem1.removeKey("RepairCost");
+        //특정 nbt 태그 제거 후 비교
+        removeSpecificNBTTags(metaNBTItem1);
+        removeSpecificNBTTags(metaNBTItem2);
 
-        metaNBTItem2.removeKey("Enchantments");
-        metaNBTItem2.removeKey("RepairCost");
-
-        // 메타 NBT 데이터 비교
         return metaNBTItem1.toString().equals(metaNBTItem2.toString());
+    }
+
+    private static void removeSpecificNBTTags(NBTItem nbtItem) {
+        if (ConfigHandler.getInstance().getIsMaintainingVanillaEnchantment()) {
+            nbtItem.removeKey("Enchantments");
+            nbtItem.removeKey("RepairCost");
+        }
+
+        // PublicBukkitValues 제거
+        // 2024-07-17 현재 이 기능은 작동이 안되고 있음. "advancedenchantments:slots" 을 인식하지 못하는 것 같음
+        // 따라서, 아이템에 AE 인첸트를 빼고 남은 찌거기 nbt 인 "PublicBukkitValues:{"advancedenchantments:slots":0}"
+        // 딱 이 부분만을 없애주기 위해 한번 더 업데이트 되는 현상은 있음
+        //NBTCompound publicBukkitValues = nbtItem.getCompound("PublicBukkitValues");
+
+        // PublicBukkitValues 태그와 그 안의 모든 값 제거 (AE 인첸트와 관련된 태그를 배제하고 비교하기 위함)
+        if (nbtItem.hasTag("PublicBukkitValues")) {
+            nbtItem.removeKey("PublicBukkitValues");
+        }
+
+
+
+        // Lore 값 제거 (AE 인첸트의 인첸트 표시는 로어에 표시되므로, 로어도 모두 배제시키고 비교)
+        // 기본적으로 MMOItems 에서 설정한 로어는, "MMOITEMS_LORE:" 라는 태그에 저장됨. 즉 바닐라 Lore 태그안에 저장되는 식이 아니라서
+        // Lore 값을 제거하더라도, MMOItems 에서 로어를 추가했다면 MMOITEMS_LORE 값이 바뀌기 때문에 업데이트가 수행됨
+        ReadWriteNBT displayTag = nbtItem.getCompound("display");
+        if (displayTag != null) {
+            displayTag.removeKey("Lore");
+            // display 태그가 비어 있으면 제거
+            if (displayTag.getKeys().isEmpty()) {
+                nbtItem.removeKey("display");
+            }
+        }
+
     }
 }

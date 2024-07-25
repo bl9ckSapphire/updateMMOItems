@@ -15,11 +15,11 @@ public class ConfigHandler {
     private boolean isWorkCursorClick;
     private boolean isMaintainingVanillaEnchantment;
     private boolean isWorkCreative;
+    private boolean isMaintainingAEenchant;
+    private boolean isWorkUpgradableItems;
     private boolean isWorkGemstoneApplied;
     private boolean isWorkJoinUpdate;
-
     private boolean isWorkWhitelist;
-
     private List<String> whitelistTypeList;
 
 
@@ -56,7 +56,8 @@ public class ConfigHandler {
             plugin.getLogger().info("config.yml 이 존재하지 않아, 새로 생성됨.");
         }
 
-        Message.reloadConfigMessage(); // Message 클래스에 따로 분리해놓은 것들
+        Message.reloadConfigMessage(); // Message 클래스에 분리해놓은 메시진 관련 리로드 메서드
+
         FileConfiguration config = UpdateMMOItems.getInstance().getConfig();
 
         // 최대 내구도일 때만 작동시킬건지 결정하는 콘피그 데이터 (기본값 true)
@@ -70,6 +71,12 @@ public class ConfigHandler {
 
         // 겜모상태에서 커서클릭 업데이트 기능 작동할지 여부를 판단하는 옵션 (기본값 false)
         isWorkCreative = config.getBoolean("options.cursor-click.work-gamemode-creative", false);
+
+        // 업데이트 진행 시, 아이템에 발려진 AdvancedEnchantments 인첸트 데이터를 유지할건지 판단하는 옵션(기본값 true)
+        isMaintainingAEenchant = config.getBoolean("options.maintaining-advanced-enchantments", true);
+
+        // 업그레이드 가능한 아이템에 업데이트가 작동할지 판단하는 옵션 (기본값 false)
+        isWorkUpgradableItems = config.getBoolean("options.work-upgrading-items", false);
 
         // 젬스톤이 박혀있는 상태에서도 업데이트 작동할지 판단하는 옵션 (기본값 false)
         isWorkGemstoneApplied = config.getBoolean("options.work-with-gem-stone-applied", false);
@@ -92,12 +99,15 @@ public class ConfigHandler {
         // 업데이트 실패 사운드 관련 콘피그 데이터
         failSounds = config.getString("sounds.fail.sound", "BLOCK_NOTE_BLOCK_COW_BELL");
         failVolume = (float)config.getDouble("sounds.fail.volume", 0.9);
-        failPitch = (float)config.getDouble("sounds.fail.pitch", 1.0);
+        failPitch = (float)config.getDouble("sounds.fail.pitch", 0.1);
     }
 
     public boolean getIsWorkMaxDurability() { return isMaxDurability; }
     public boolean getIsWorkCursorClick() { return isWorkCursorClick; }
     public boolean getIsMaintainingVanillaEnchantment() { return isMaintainingVanillaEnchantment; }
+
+    public boolean getIsMaintainingAEenchant() { return isMaintainingAEenchant; }
+    public boolean getIsWorkUpgradableItems() { return isWorkUpgradableItems; }
     public boolean getIsWorkGemstoneApplied() { return isWorkGemstoneApplied; }
     public boolean getIsWorkCreative() { return isWorkCreative; }
     public boolean getIsWorkJoinUpdate() { return isWorkJoinUpdate; }

@@ -1,0 +1,10 @@
+
+# "/updatemmoitems" 기본 명령어 별칭 말고도 추가로 사용할 명령어 별칭을 생성합니다.
+# ※주의※ aliases 추가 후, 서버를 한번 재부팅해야 해당 별칭들이 적용됩니다. (플러그인 reload 로는 적용되지 않습니다.)
+aliases:
+  enable: true
+  list:
+    - "업데이트"
+    - "updateMMO"
+    - "djqepdlxm(업데이트)"
+    - "djqepdlxm"
