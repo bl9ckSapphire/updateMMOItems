@@ -68,6 +68,7 @@ public class AliasesHandler {
                 command.unregister(commandMap);
             }
         } catch (Exception e) {
+            // 디버깅 용도
             plugin.getLogger().warning("명령어 해제 중 오류 발생: " + e.getMessage());
         }
     }
@@ -83,9 +84,11 @@ public class AliasesHandler {
                 command.setAliases(aliases);
                 commandMap.register(plugin.getName(), command);
             } else {
+                // 디버깅 용도
                 plugin.getLogger().warning("명령어 '" + commandName + "'를 찾을 수 없습니다.");
             }
         } catch (Exception e) {
+            // 디버깅 용도
             plugin.getLogger().warning("명령어 등록 중 오류 발생: " + e.getMessage());
         }
     }
