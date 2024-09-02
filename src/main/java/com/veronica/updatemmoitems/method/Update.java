@@ -4,10 +4,10 @@ import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.sub.*;
-import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -16,8 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 
-import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestMMOItems;
-import static com.veronica.updatemmoitems.method.sub.GetItemsInfo.getMMOItemsInfo;
+import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestCustomItems;
+import static com.veronica.updatemmoitems.method.sub.GetLatestItems.getLatestCustomItems;
 
 public class Update {
 
@@ -54,7 +54,7 @@ public class Update {
             // 만약 이런 이벤트 수행중에도 메시지가 전송된다면 채팅창이 메시지로 도배될 것임.
             // 따라서 이벤트로 수행되는것이 아닌, "/업데이트" 명령어 사용 시에만 실패 메시지가 전송되도록
             if (event == null) {
-                player.sendMessage(miniMessage.deserialize(Message.NO_MMOITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+                player.sendMessage(miniMessage.deserialize(Message.NO_INCORRECT_ITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
                 PlaySounds.playSounds(player,
                         ConfigHandler.getInstance().getFailSounds(),
                         ConfigHandler.getInstance().getFailVolume(),
@@ -64,15 +64,20 @@ public class Update {
             return;
         }
 
-        MMOItem mmoItem = getMMOItemsInfo(targetItem);
+        // MMOItem mmoItem = getMMOItemsInfo(targetItem);
 
-        // MMOItems 아이템이 아닌 경우
-        if (mmoItem == null) {
+        // 해당 아이템이 IA, Oraxen, MMOItems 인 경우, 해당 아이템을 최신 상태로 받아옴
+        ItemStack latestCustomItem = getLatestCustomItems(targetItem);
+
+
+
+        // 해당 아이템의 최신 아이템 정보가 없는경우 (없는 아이템인 경우)
+        if (latestCustomItem == null) {
             // PlayerInteractEvent, InventoryClickEvent 가 아닌경우 "메시지+사운드" 를 재생 & 출력
             // 만약 이런 이벤트 수행중에도 메시지가 전송된다면 채팅창이 메시지로 도배될 것임.
             // 따라서 이벤트로 수행되는것이 아닌, "/업데이트" 명령어 사용 시에만 실패 메시지가 전송되도록
             if (event == null) {
-                player.sendMessage(miniMessage.deserialize(Message.NO_MMOITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+                player.sendMessage(miniMessage.deserialize(Message.NO_INCORRECT_ITEMS.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
                 PlaySounds.playSounds(player,
                         ConfigHandler.getInstance().getFailSounds(),
                         ConfigHandler.getInstance().getFailVolume(),
@@ -124,7 +129,7 @@ public class Update {
 
 
         // updatedItem 변수에 해당 Type, ID 를 지닌 아이템 정보를 받아옴(즉, 해당 아이템의 가장 현재 정보를 받아옴)
-        ItemStack updatedItem = mmoItem.newBuilder().build();
+        //ItemStack updatedItem = mmoItem.newBuilder().build();
 
 
         // 1. 내구도가 존재하는 아이템인지 확인
@@ -144,9 +149,10 @@ public class Update {
         }
 
         // 이미 최신화된 아이템일 경우, 종료
-        if (isLatestMMOItems(targetItem, updatedItem)) {
+        if (isLatestCustomItems(targetItem, latestCustomItem)) {
             if (event == null) {
                 player.sendMessage(miniMessage.deserialize(Message.ALREADY_LATEST.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
+
                 PlaySounds.playSounds(player,
                         ConfigHandler.getInstance().getFailSounds(),
                         ConfigHandler.getInstance().getFailVolume(),
@@ -178,8 +184,8 @@ public class Update {
             // 메인핸드에 있는 아이템의 수량을 가져옴
             int itemAmount = itemInHand.getAmount();
 
-            // 업데이트된 아이템을 생성
-            ItemStack totalGiveItems = updatedItem.clone();
+            // 최종 지급할 totalGiveItems 변수에 latestCustomItem(해당 아이템의 최신 정보) 대입
+            ItemStack totalGiveItems = latestCustomItem;
 
             // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
@@ -212,8 +218,8 @@ public class Update {
             // 클릭된 아이템의 수량을 가져옴
             int itemAmount = clickedItem.getAmount();
 
-            // 업데이트된 아이템을 생성
-            ItemStack totalGiveItems = updatedItem.clone();
+            // 최종 지급할 totalGiveItems 변수에 latestCustomItem(해당 아이템의 최신 정보) 대입
+            ItemStack totalGiveItems = latestCustomItem;
 
             // 메인핸드에 들고있는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);

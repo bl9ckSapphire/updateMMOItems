@@ -1,6 +1,7 @@
 package com.veronica.updatemmoitems.method.sub;
 
 import com.veronica.updatemmoitems.config.ConfigHandler;
+import com.veronica.updatemmoitems.config.OtherPluginHandler;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.iface.ReadWriteNBT;
@@ -9,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class CheckLatest {
 
-    public static boolean isLatestMMOItems(ItemStack item1, ItemStack item2) {
+    public static boolean isLatestCustomItems(ItemStack item1, ItemStack item2) {
         if (item1 == null || item2 == null) {
             return false;
         }
@@ -72,6 +73,9 @@ public class CheckLatest {
         // 기본적으로 MMOItems 에서 설정한 로어는, "MMOITEMS_LORE:" 라는 태그에 저장됨. 즉 바닐라 Lore 태그안에 저장되는 식이 아니라서
         // Lore 값을 제거하더라도, MMOItems 에서 로어를 추가했다면 MMOITEMS_LORE 값이 바뀌기 때문에 업데이트가 수행됨
         ReadWriteNBT displayTag = nbtItem.getCompound("display");
+        // 1.20.5+ 부터 ItemStacks는 런타임 동안 vanilla nbt를 더 이상 갖지 않아서
+        // Lore, display 태그를 제거하는 것은 1.20.4 이하 버전을 위한 코드
+        // (20.5+ 부터는 바닐라태그인 Lore, display 가 nbtItem 에 담기지 않아서 해당 코드는 필요없음)
         if (displayTag != null) {
             displayTag.removeKey("Lore");
             // display 태그가 비어 있으면 제거

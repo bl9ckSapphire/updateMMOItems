@@ -9,10 +9,10 @@ public enum Message {
     NO_PERMISSION("<prefix><gold>권환(펄미션) 없음"),
     NO_PLAYER("<prefix><white>플레이어만 사용 가능한 명령어입니다."),
     IS_AIR("<prefix><white>손에 아무것도 들고있지 않음"),
-    NO_MMOITEMS("<prefix><white>올바른 아이템을 들고 시도해주세요."),
+    NO_INCORRECT_ITEMS("<prefix><white>올바른 아이템을 들고 시도해주세요."),
     UPGRADABLE_ITEMS("<prefix><white>현재, 업그레이드 가능한 아이템은 업데이트 할 수 없도록 설정되어있습니다."),
     DETECTED_GEMSTONE("<prefix><white>올바른 아이템을 들고 시도해주세요."),
-    ALREADY_LATEST("<prefix><yellow>이 명령어는 오직 플레이어를 통해서만 사용 가능합니다."),
+    ALREADY_LATEST("<prefix><yellow>이미 최신화된 아이템입니다."),
     USED_ITEM("<prefix><white>내구도를 완전히 수리하신 후 사용해주세요."),
     NO_INVENTORY_SPACE("<prefix><white>인벤토리에 공간이 없습니다."),
     SUCCESS_UPDATE("<prefix><white>아이템 업데이트 완료!"),
@@ -53,7 +53,7 @@ public enum Message {
 
         IS_AIR.setMessage(instance.getConfig().getString("message.is-air"));
 
-        NO_MMOITEMS.setMessage(instance.getConfig().getString("message.no-mmoitems"));
+        NO_INCORRECT_ITEMS.setMessage(instance.getConfig().getString("message.no-incorrect-items"));
 
         UPGRADABLE_ITEMS.setMessage(instance.getConfig().getString("message.upgrading-items"));
 

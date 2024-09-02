@@ -5,6 +5,7 @@ import com.veronica.updatemmoitems.command.sub.InvUpdateCommand;
 import com.veronica.updatemmoitems.command.sub.ReloadCommand;
 import com.veronica.updatemmoitems.config.AliasesHandler;
 import com.veronica.updatemmoitems.config.ConfigHandler;
+import com.veronica.updatemmoitems.config.OtherPluginHandler;
 import com.veronica.updatemmoitems.listener.InventoryClickEvent;
 import com.veronica.updatemmoitems.listener.JoinEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -14,6 +15,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.logging.Logger;
+
+import static org.bukkit.Bukkit.getServer;
 
 public final class UpdateMMOItems extends JavaPlugin {
 
@@ -35,19 +38,28 @@ public final class UpdateMMOItems extends JavaPlugin {
         instance = this;
         configHandler = ConfigHandler.getInstance();
 
-        // MMOItems 플러그인을 찾기
+        // 서버에 MMOItems, AE, Oraxen, ItemsAdder 플러그인 찾기
         Plugin mmoItemsPlugin = getServer().getPluginManager().getPlugin("MMOItems");
+        Plugin aePlugin = getServer().getPluginManager().getPlugin("AdvancedEnchantments");
+        Plugin oraxenPlugin = getServer().getPluginManager().getPlugin("Oraxen");
+        Plugin itemsAdderPlugin = getServer().getPluginManager().getPlugin("ItemsAdder");
 
-        // MMOItems 와 NBTAPI 존재 여부를 검사
+        // 외부 플러그인 및 종속성 플러그인 존재 여부를 검사
         if (mmoItemsPlugin != null && mmoItemsPlugin.isEnabled() && isNBTAPIAvailable()) {
             // Plugin startup logic
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ ChatColor.GOLD + "--------------------------------------");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "MMOItems, NBT-API 감지됨. 활성화 완료");
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "updateMMOItems 활성화");
 
-            Plugin aePlugin = getServer().getPluginManager().getPlugin("AdvancedEnchantments");
+
             if (aePlugin != null && aePlugin.isEnabled()) {
                 getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.AQUA + "부가적으로, AdvancedEnchantments 감지됨.");
+            }
+            if (itemsAdderPlugin != null && itemsAdderPlugin.isEnabled()) {
+                getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.AQUA + "부가적으로, ItemsAdder 감지됨.");
+            }
+            if (oraxenPlugin != null && oraxenPlugin.isEnabled()) {
+                getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.AQUA + "부가적으로, Oraxen 감지됨.");
             }
 
             getServer().getConsoleSender().sendMessage("[updateMMOItems] "+ChatColor.GOLD + "--------------------------------------");
@@ -73,12 +85,15 @@ public final class UpdateMMOItems extends JavaPlugin {
         // 플러그인의 커맨드 등록
         registerCommands();
 
-        // ConfigHandler 클래스에 구현해 둔 config 정보 리로드 메서드
+        // ConfigHandler 클래스에 구현해 둔 config.yml 정보 리로드
         ConfigHandler.getInstance().reloadConfigOptions();
 
-        // AliasesHandler 클래스에 구현해 둔 aliases 정보 리로드 및 명령어 별칭으로 서버에 등록
+        // AliasesHandler 클래스에 구현해 둔 aliases.yml 정보 리로드 및 명령어 별칭으로 서버에 등록
         AliasesHandler.getInstance().reloadAliasesConfig();
         AliasesHandler.getInstance().applyAliasesToCommand();
+
+        // OtherPluginsHandler 클래스에 구현해 준 otherPlugins.yml 정보 리로드
+        OtherPluginHandler.getInstance().reloadOtherPluginsConfig();
 
         // 이벤트 리스너 등록
         getServer().getPluginManager().registerEvents(new InventoryClickEvent(), this);

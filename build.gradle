@@ -22,6 +22,7 @@ repositories {
     maven { url = 'https://repo.luminescent.dev/repository/public/' }
     maven { url = 'https://erethon.de/repo/' }
     maven { url = 'https://mvn.lumine.io/repository/maven-public/' }
+    maven { url "https://repo.oraxen.com/releases" }
 
 }
 
@@ -32,6 +33,9 @@ dependencies {
     compileOnly 'io.lumine:MythicLib-dist:1.3.1'
     compileOnly 'net.Indyuce:MMOItems:6.7.3'
     compileOnly 'de.tr7zw:item-nbt-api-plugin:2.13.1'
+    compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
+    compileOnly 'io.th0rgal:oraxen:1.173.0'
+
 
     implementation files('libs/AdvancedEnchantments-8.7.4.jar')
 }

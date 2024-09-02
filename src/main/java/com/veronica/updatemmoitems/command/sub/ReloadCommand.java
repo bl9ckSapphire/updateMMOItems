@@ -5,6 +5,7 @@ import com.veronica.updatemmoitems.command.SubCommand;
 import com.veronica.updatemmoitems.config.AliasesHandler;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
+import com.veronica.updatemmoitems.config.OtherPluginHandler;
 import com.veronica.updatemmoitems.permission.Permission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -31,6 +32,9 @@ public class ReloadCommand extends SubCommand {
 
             // aliases.yml 리로드 및 적용
             AliasesHandler.getInstance().reloadAliasesConfig();
+
+            // otherPlugins.yml 리로드 및 적용
+            OtherPluginHandler.getInstance().reloadOtherPluginsConfig();
 
 
             sender.sendMessage(miniMessage.deserialize(Message.RELOAD.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));

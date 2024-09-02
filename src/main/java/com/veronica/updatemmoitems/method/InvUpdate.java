@@ -4,7 +4,6 @@ import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.sub.*;
-import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -13,8 +12,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestMMOItems;
-import static com.veronica.updatemmoitems.method.sub.GetItemsInfo.getMMOItemsInfo;
+import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestCustomItems;
+import static com.veronica.updatemmoitems.method.sub.GetLatestItems.*;
 
 public class InvUpdate {
     private static final MiniMessage miniMessage = UpdateMMOItems.getMiniMessage();
@@ -32,17 +31,20 @@ public class InvUpdate {
             // 비어있는 경우, 현재 슬롯 건너뜀
             if (targetItem == null || targetItem.getType() == Material.AIR || !targetItem.hasItemMeta()) { continue; }
 
-            MMOItem mmoItem = getMMOItemsInfo(targetItem);
+            // 해당 아이템이 IA, Oraxen, MMOItems 인 경우, 해당 아이템을 최신 상태로 받아옴
+            ItemStack latestCustomItem = getLatestCustomItems(targetItem);
 
-            // MMOItems 아이템이 아닌 경우, 현재 슬롯 건너뜀
-            if (mmoItem == null) { continue; }
+            //MMOItem mmoItem = getMMOItemsInfo(targetItem);
+
+            // 해당 아이템의 최신 아이템 정보가 없는경우 (없는 아이템인 경우), 현재 슬롯 건너뜀
+            if (latestCustomItem == null) { continue; }
 
             // whitelist 옵션이 꺼져있을 경우 또는 화이트리스트에서 허용된 Type이 감지될 경우 통과하지만 (true)
             // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), continue
             if (!Whitelist.whitelistCheck(targetItem)){ continue; }
 
             // updatedItem 변수에 해당 Type, ID 를 지닌 아이템 정보를 받아옴(즉, 해당 아이템의 가장 현재 정보를 받아옴)
-            ItemStack updatedItem = mmoItem.newBuilder().build();
+            //ItemStack updatedItem = latestCustomItem;
 
             // 업그레이드 가능한 아이템의 업데이트 기능이 비활성화 상태 + 업그레이드가 1강이라도 적용된 경우 >> 건너뜀
             if ( !(ConfigHandler.getInstance().getIsWorkUpgradableItems()) && (CheckUpgrade.isUpgradingItems(targetItem)) ){
@@ -62,13 +64,13 @@ public class InvUpdate {
             }
 
             // 이미 최신화된 아이템일 경우, 현재 슬롯 건너뜀
-            if (isLatestMMOItems(targetItem, updatedItem)) { continue; }
+            if (isLatestCustomItems(targetItem, latestCustomItem)) { continue; }
 
             // 인벤토리 슬롯에 있는 아이템의 수량을 가져옴
             int itemAmount = targetItem.getAmount();
 
-            // 업데이트된 아이템을 생성
-            ItemStack totalGiveItems = updatedItem.clone();
+            // 최종 지급할 totalGiveItems 변수에 latestCustomItem(해당 아이템의 최신 정보) 대입
+            ItemStack totalGiveItems = latestCustomItem;
 
             // 해당 인벤토리 칸에 존재하는 아이템 수량만큼 수량을 설정
             totalGiveItems.setAmount(itemAmount);
