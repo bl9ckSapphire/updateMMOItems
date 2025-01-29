@@ -2,6 +2,7 @@ package com.veronica.updatemmoitems.method.sub;
 
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import de.tr7zw.nbtapi.NBTItem;
 
@@ -27,7 +28,7 @@ public class Whitelist {
         for (String value : typeList) {
             String[] parts = value.split(":");
             if (parts.length != 2) {
-                UpdateMMOItems.getPluginLogger().warning(value + "는, 잘못된 whitelist 표기입니다.");
+                Bukkit.getLogger().info(value + "는, 잘못된 whitelist 표기입니다.");
                 continue;
             }
 

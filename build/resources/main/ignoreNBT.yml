@@ -1,0 +1,128 @@
+# 업데이트 시, 최신 MMOItems 와 NBT 를 비교하는 과정을 거칩니다.
+# 이 때, 특정 NBT 를 비교 대상에서 제외함으로써, "내구도, AE인첸트, 바닐라 인첸트, 단순한 로어 변경" 등으로 인해
+# 업데이트가 수행되는것을 방지하는 기능을 합니다.
+
+# =================================================== 미리 작성된 아래의 Ignore-NBT 간단 설명 ===================================================
+
+# 1. 인첸트가 된것처럼, 아이템이 반짝이는 이펙트를 가지는지를 설정하는 태그 ▶ minecraft:enchantment_glint_override
+# 2. 깎인 내구도 ▶ "minecraft:damage"
+# 3. 아이템의 바닐라 로어 ▶ "minecraft:lore"
+# 4. 바닐라 인첸트 데이터 ▶ "minecraft:enchantments"
+# 5. 아이템의 바닐라 네임(모루 등으로 변경할 수 있는 아이템의 이름) ▶ "minecraft:custom_name"
+# 6. 모루에서의 경험치 수리비용 ▶ minecraft:repair_cost
+
+
+# 7. MMOItems 의 젬스톤 관련 정보 ▶ MMOITEMS_GEM_STONES
+# 8. MMOItems 의 옵션으로 설정한 MMOItems 만의 커스텀 로어 ▶ "MMOITEMS_DYNAMIC_LORE"
+# 9. MMOItems 의 옵션으로 설정한 인첸트 ▶ "MMOITEMS_ENCHANTS"
+# 10. AE 인첸트 데이터가 담긴 태그 ▶ "PublicBukkitValues"
+# 11. MMOItems 의 스탯 히스토리 데이터 ▶ "HSTRY_*"
+# 12. "MMOITEMS_" , "PublicBukkitValues", "HSTRY_" 3개중 아무것도 포함되어 있지않은 NBT태그들 ▶ "not_contains_MMOITEMS_or_PublicBukkitValues_or_HSTRY"
+
+# 최신 MMOItems 와의 NBT 비교 시, 이렇게 8가지의 태그를 제외시키고 비교합니다.
+# 따라서 인첸트가 되어있거나, 내구도가 깎여있거나, 아이템의 바닐라 이름이 바뀌었거나, 아주 빈번히 바뀌는 대표적인 태그인 lore(로어) 등이 변경되어 있더라도, 업데이트시키지 않도록 합니다.
+
+# =============================================================================================================================================
+Ignore-NBT:
+
+    # MMOItems에서도 존재할 수 있는 바닐라 NBT 태그들을 다룸
+    vanilla-nbt-list:
+        - "enchantment_glint_override" # 1.20.4 이하 버전에서, 인첸트 시각효과 유무 NBT
+        - "minecraft:enchantment_glint_override" # 1.20.5+ 에서, 인첸트 시각효과 유무 NBT
+
+        - "damage" # 1.20.4 이하 버전에서, 깎인 내구도 NBT
+        - "minecraft:damage"  # 1.20.5+ 에서, 깎인 내구도 NBT
+
+        - "lore" # 1.20.4 이하 버전에서, 바닐라 아이템 로어
+        - "minecraft:lore" # 1.20.5+ 에서, 바닐라 아이템 로어
+
+        - "enchantments" # 1.20.4 이하 버전에서, 바닐라 인첸트 NBT
+        - "minecraft:enchantments" # 1.20.5+ 에서, 바닐라 인첸트 NBT
+
+        - "custom_name" # 1.20.4 이하 버전에서, 바닐라 아이템 이름 NBT
+        - "minecraft:custom_name" # 1.20.5+ 에서, 바닐라 아이템 이름 NBT
+
+
+        - "repair_cost" # 1.20.4 이하 버전에서, 모루 수리비용 NBT
+        - "minecraft:repair_cost" # 1.20.5+ 에서, 모루 수리비용 NBT
+
+
+    # MMOItems에서만 존재하는 커스텀 NBT 태그들만을 다룸
+    mmoitems-custom-stat-nbt-list:
+        # 1.20.5+ 에서, 아래 NBT 들은 "minecraft:custom_data" 컴파운드 내부에 속해있는 태그들임.
+        # 1.20.4 이하에서 사용할 때에도 "minecraft:~~"를 붙일필요 없이 이대로 사용.
+        - "MMOITEMS_GEM_STONES"
+        - "MMOITEMS_DYNAMIC_LORE"
+        - "MMOITEMS_ENCHANTS"
+        - "PublicBukkitValues"
+        - "HSTRY_*"
+
+
+        # custom_data 컴파운드 내부에 속해있지만, "MMOITEMS_" , "PublicBukkitValues", "HSTRY_" 3개에 접미사 중 아무것도 붙어있지 않은 NBT태그들
+        - "not_contains_MMOITEMS_or_PublicBukkitValues_or_HSTRY"
+        #   ┗ 예). "PublicBukkitValues" 같은 것들
+
+
+# ================================================================ 상세 설명이 필요한 NBT ===================================================================================
+#
+# MMOITEMS_GEM_STONES : MMOItems 의 젬스톤 관련 정보가 저장되는 곳
+
+
+# MMOITEMS_DYNAMIC_LORE : MMOItems 의 로어 설정 옵션으로 추가한 로어 정보가 저장되는 곳 (일반 바닐라 로어 또는 AE 인첸트에 의한 인첸트 텍스트는 lore 태그에 저장됨)
+#   ┗ MMOITEMS_LORE 와 다른점 : MMOITEMS_LORE 태그에는, MMOItems 의 로어 설정 옵션으로 추가한 로어 정보만 뜨지만, MMOITEMS_DYNAMIC_LORE 에는 이 로어 뿐만 아니라, 스탯 옵션에 의한 표시 로어 까지 담고있음
+
+
+# HSTRY_* : 해당 "HSTRY_" 가 포함되어있는 모든 NBT 를 뜻함
+#   ┗ 아이템이 지금까지 변경되면서 과거의 스탯 정보들이 저장되는 태그들은 모두 "HSTRY_" 로 시작되는 NBT 태그로 저장됨
+
+
+# ================== "not_contains_MMOITEMS_or_PublicBukkitValues_or_HSTRY" 를 사용하는 이유 ========================================
+# MMOItems 의 "NBT Tags" 옵션으로, 아이템에 원하는 NBT 태그를 더 추가하면 (여기서는 예시로 "예시_NBT_태그" 라는 NBT 태그)
+# MMOITEMS_CUSTOM_NBT 태그 안에 "예시_NBT_태그" 가 저장되지만, 불필요하게 추가로, custom_data={...} 내부 마지막줄에도 "예시_NBT_태그" NBT 태그가 붙게 됨.
+# 따라서, "MMOITEMS_" , "PublicBukkitValues", "HSTRY_" 문자가 포함되어 있지않은 NBT태그는
+# - "not_contains_MMOITEMS_or_PublicBukkitValues_or_HSTRY" 을 추가하여, 최신 아이템의 NBT 정보와 비교 시, 제외함.
+#
+# 만약 젬스톤에 이러한 "NBT Tags" 옵션으로 추가한 NBT 태그가 있다면, 해당 젬스톤을 장착하고 제거한 후에도
+# 젬스톤을 한번 장착했던 아이템에 "예시_NBT_태그" 가 존재하여, 업데이트가 진행되는 상황이 발생함
+# 따라서, "MMOITEMS_" , "PublicBukkitValues", "HSTRY_" 문자가 포함되어 있지않은 NBT태그를 모두 제외하여, 이런 NBT 태그를 무시하도록 설계
+# ==========================================================================================================================================================================
+
+
+
+
+# ======================================================= 예시 MMOItems 아이템의 NBT 구조 (1.20.5+) ========================================================================
+# =========================================================================================================================================================================
+# minecraft:iron_sword[
+#     custom_data={
+#         HSTRY_BLOCK_BREAK_SPEED: '{"Stat":"BLOCK_BREAK_SPEED","Gemstory":[{"d0cca752-c09e-4818-b8d0-41df54991fe4":[{"MMOITEMS_BLOCK_BREAK_SPEED_ñdbl":1234.0}]}]}',
+#         HSTRY_CUSTOM_NBT: '{"Stat":"CUSTOM_NBT","Gemstory":[{"d0cca752-c09e-4818-b8d0-41df54991fe4":[{"예시_NBT_태그_ñdbl":10.5},{"MMOITEMS_CUSTOM_NBT_ñstr":"[\\"예시_NBT_태그 10.5\\",\\"EXTMI_예시_NBT_태그 10.5\\"]"}]}]}',
+#         HSTRY_ENCHANTS: '{"Stat":"ENCHANTS","OGStory":[{"MMOITEMS_ENCHANTS_ñstr":"[\\"sharpness 4\\"]"}],"Gemstory":[{"d0cca752-c09e-4818-b8d0-41df54991fe4":[{"MMOITEMS_ENCHANTS_ñstr":"[]"}]}]}',
+#         HSTRY_NAME: '{"Stat":"NAME","OGStory":[{"MMOITEMS_NAME_ñstr":"&a철검일까"}]}',
+#         MMOITEMS_BLOCK_BREAK_SPEED: 1234.0d,
+#         MMOITEMS_CRITICAL_STRIKE_POWER: 1111.0d,
+#         MMOITEMS_CUSTOM_NBT: '["예시_NBT_태그 10.5","EXTMI_예시_NBT_태그 10.5"]',
+#         MMOITEMS_DYNAMIC_LORE: '["§f§7Strike III","§f§cSword","§f","§f§3 §7■ Crit Strike Power: §f+1111%","§f§3 §7■ Mining Speed: §f+1234","§f","§f§a◆ §f곡괭이 젬스톤","§f§a◆ §fEmpty §7근접무기","§f§a◆ §fEmpty §7근접무기","§f§a◆ §fEmpty §7원거리무기","§f§a◆ §fEmpty §7곡괭이","§f§a◆ §fEmpty §7원거리무기"]',
+#         MMOITEMS_ENCHANTS: '["sharpness 4"]',
+#         MMOITEMS_GEM_STONES: '{"EmptySlots":["근접무기","근접무기","원거리무기","곡괭이","원거리무기"],"Gemstones":[{"Name":"§f곡괭이 젬스톤","History":"d0cca752-c09e-4818-b8d0-41df54991fe4","Id":"곡괭이","Type":"GEM_STONE","Color":"곡괭이"}]}',
+#         MMOITEMS_ITEM_ID: "TEST_SWORD_1",
+#         MMOITEMS_ITEM_TYPE: "SWORD",
+#         MMOITEMS_MAX_ITEM_DAMAGE: 10021,
+#         MMOITEMS_NAME: "&a철검일까",
+#         PublicBukkitValues: {"advancedenchantments:ae_enchantment-strike": 3},
+#         "예시_NBT_태그": 10.5d
+#     },
+#
+#     custom_name='{"extra":[{"color":"green","italic":false,"text":"철검일까"}],"text":""}',
+#
+#     attribute_modifiers={modifiers: [{amount: 0.0d, id: "mmoitems:decoy", operation: "add_value", type: "minecraft:generic.attack_speed"}], show_in_tooltip: 0b},
+#
+#     enchantments={levels: {"minecraft:sharpness": 4}},
+#
+#     max_damage=10021,
+#
+#     lore=[[대충 예시 바닐라 로어]]
+# ]
+# =========================================================================================================================================================================
+# ==========================================================================================================================================================================
+
+

@@ -11,25 +11,22 @@ import java.util.logging.Logger;
 public class ConfigHandler {
     private static ConfigHandler instance;
     private final FileConfiguration config;
-    private boolean isMaxDurability;
+
+    private boolean isDebugEnable;
+
+    private boolean isMaintainingDurability;
     private boolean isWorkCursorClick;
     private boolean isMaintainingVanillaEnchantment;
     private boolean isWorkCreative;
     private boolean isMaintainingAEenchant;
-    private boolean isWorkUpgradableItems;
-    private boolean isWorkGemstoneApplied;
     private boolean isWorkJoinUpdate;
     private boolean isWorkWhitelist;
     private List<String> whitelistTypeList;
 
 
-    private String successSounds;
-    private float successVolume;
-    private float successPitch;
+    private List<String> successSounds;
 
-    private String failSounds;
-    private float failVolume;
-    private float failPitch;
+    private List<String> failSounds;
 
     private ConfigHandler() {
         config = UpdateMMOItems.getInstance().getConfig();
@@ -60,8 +57,11 @@ public class ConfigHandler {
 
         FileConfiguration config = UpdateMMOItems.getInstance().getConfig();
 
-        // 최대 내구도일 때만 작동시킬건지 결정하는 콘피그 데이터 (기본값 true)
-        isMaxDurability = config.getBoolean("options.work-only-max-dura", true);
+        // 콘솔창에 각종 디버그 메시지를 뜨게 할 건지 옵션 (오직 op의 행동에 의해서만 로그가 출력됨)
+        isDebugEnable = config.getBoolean("options.debug-log", false);
+
+        // 아이템 업데이트 시, 깎여있던 내구도를 유지시킬건지 여부 (기본값 true)
+        isMaintainingDurability = config.getBoolean("options.maintaining-durability", true);
 
         // 인벤토리 창에서 아이템 클릭 시, 업데이트 수행하는 옵션 (기본값 false)
         isWorkCursorClick = config.getBoolean("options.cursor-click.enable", false);
@@ -75,12 +75,6 @@ public class ConfigHandler {
         // 업데이트 진행 시, 아이템에 발려진 AdvancedEnchantments 인첸트 데이터를 유지할건지 판단하는 옵션(기본값 true)
         isMaintainingAEenchant = config.getBoolean("options.maintaining-advanced-enchantments", true);
 
-        // 업그레이드 가능한 아이템에 업데이트가 작동할지 판단하는 옵션 (기본값 false)
-        isWorkUpgradableItems = config.getBoolean("options.work-upgrading-items", false);
-
-        // 젬스톤이 박혀있는 상태에서도 업데이트 작동할지 판단하는 옵션 (기본값 false)
-        isWorkGemstoneApplied = config.getBoolean("options.work-with-gem-stone-applied", false);
-
         // 서버 접속 시, 인벤토리에 있는 아이템들을 자동으로 업데이트 할 건지 판단하는 옵션 (기본값 false)
         isWorkJoinUpdate = config.getBoolean("options.join-update", false);
 
@@ -91,37 +85,26 @@ public class ConfigHandler {
         whitelistTypeList = config.getStringList("whitelist.type-list");
 
 
-        // 업데이트 성공 사운드 관련 콘피그 데이터
-        successSounds = config.getString("sounds.success.sound", "ENTITY_PLAYER_LEVELUP");
-        successVolume = (float)config.getDouble("sounds.success.volume", 1.0);
-        successPitch = (float)config.getDouble("sounds.success.pitch", 1.0);
+        successSounds = config.getStringList("sounds.success");
+        failSounds = config.getStringList("sounds.fail");
 
-        // 업데이트 실패 사운드 관련 콘피그 데이터
-        failSounds = config.getString("sounds.fail.sound", "BLOCK_NOTE_BLOCK_COW_BELL");
-        failVolume = (float)config.getDouble("sounds.fail.volume", 0.9);
-        failPitch = (float)config.getDouble("sounds.fail.pitch", 0.1);
     }
 
-    public boolean getIsWorkMaxDurability() { return isMaxDurability; }
+    public boolean getIsDebugEnable() { return isDebugEnable; }
+    public boolean getIsEnableMaintainingDurability() { return isMaintainingDurability; }
     public boolean getIsWorkCursorClick() { return isWorkCursorClick; }
     public boolean getIsMaintainingVanillaEnchantment() { return isMaintainingVanillaEnchantment; }
 
     public boolean getIsMaintainingAEenchant() { return isMaintainingAEenchant; }
-    public boolean getIsWorkUpgradableItems() { return isWorkUpgradableItems; }
-    public boolean getIsWorkGemstoneApplied() { return isWorkGemstoneApplied; }
     public boolean getIsWorkCreative() { return isWorkCreative; }
     public boolean getIsWorkJoinUpdate() { return isWorkJoinUpdate; }
     public boolean getIsWorkWhitelist() { return isWorkWhitelist; }
     public List<String> getWhitelistTypeList() { return whitelistTypeList; }
 
-    public String getSuccessSounds() {
+    public List<String> getSuccessSounds() {
         return successSounds;
     }
-    public float getSuccessVolume() { return successVolume; }
-    public float getSuccessPitch() { return successPitch; }
 
-    public String getFailSounds() { return failSounds; }
-    public float getFailVolume() { return failVolume; }
-    public float getFailPitch() { return failPitch; }
+    public List<String> getFailSounds() { return failSounds; }
 
 }

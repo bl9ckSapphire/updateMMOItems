@@ -1,9 +1,0 @@
-ItemsAdder:
-  # true로 설정 시, MMOItems 정보가 존재하는 ItemsAdder 아이템 또한 업데이트시킵니다. (※주의※ true로 설정 시, 해당 ItemsAdder 아이템의 정보는 사라지고, 순수한 MMOItems 로 변환됩니다.)
-  # 주로 ItemsAdder 자체 기능으로 MMOItems 아이템 정보를 가져온 IA 아이템을 업데이트 가능한 아이템에서 제외시키기 위해 false 로 설정합니다.
-  enable: false
-
-Oraxen:
-  # true로 설정 시, MMOItems 정보가 존재하는 Oraxen 아이템 또한 업데이트시킵니다. (※주의※ true로 설정 시, 해당 Oraxen 아이템의 정보는 사라지고, 순수한 MMOItems 로 변환됩니다.)
-  # 주로 Oraxen 자체 기능으로 MMOItems 아이템 정보를 가져온 Oraxen 아이템을 업데이트 가능한 아이템에서 제외시키기 위해 false 로 설정합니다.
-  enable: false

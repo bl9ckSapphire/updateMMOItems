@@ -4,6 +4,10 @@ import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.config.ConfigHandler;
 import com.veronica.updatemmoitems.config.Message;
 import com.veronica.updatemmoitems.method.sub.*;
+import com.veronica.updatemmoitems.method.sub.check.CheckGemStone;
+import com.veronica.updatemmoitems.method.sub.check.CheckOtherPluginItem;
+import com.veronica.updatemmoitems.method.sub.set.SetDurability;
+import com.veronica.updatemmoitems.method.sub.set.SetEnchant;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
@@ -12,8 +16,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import static com.veronica.updatemmoitems.method.sub.CheckLatest.isLatestCustomItems;
-import static com.veronica.updatemmoitems.method.sub.GetLatestItems.*;
+import static com.veronica.updatemmoitems.method.sub.check.CheckLatest.isLatestCustomItems;
+import static com.veronica.updatemmoitems.method.sub.get.GetLatestItems.getLatestCustomItems;
 
 public class InvUpdate {
     private static final MiniMessage miniMessage = UpdateMMOItems.getMiniMessage();
@@ -31,10 +35,15 @@ public class InvUpdate {
             // 비어있는 경우, 현재 슬롯 건너뜀
             if (targetItem == null || targetItem.getType() == Material.AIR || !targetItem.hasItemMeta()) { continue; }
 
-            // 해당 아이템이 IA, Oraxen, MMOItems 인 경우, 해당 아이템을 최신 상태로 받아옴
+            // Nexo, Oraxen, ItemsAdder 아이템인 경우 종료 (MI 데이터를 참조할 수 있는 것들은 사전에 배제시킴)
+            if (CheckOtherPluginItem.isOtherPluginItems(null, targetItem)) { return; }
+
+
+            // 업그레이드 정보까지 타킷아이템과 동일하게 씌운 latestMMOItems 를
+            // ItemStack 자료형인 latestCustomItem 으로 선언
+            // (업그레이드 정보까지 똑같이 씌운 최신 정보의 아이템)
             ItemStack latestCustomItem = getLatestCustomItems(targetItem);
 
-            //MMOItem mmoItem = getMMOItemsInfo(targetItem);
 
             // 해당 아이템의 최신 아이템 정보가 없는경우 (없는 아이템인 경우), 현재 슬롯 건너뜀
             if (latestCustomItem == null) { continue; }
@@ -43,28 +52,10 @@ public class InvUpdate {
             // 화이트리스트에 작성된 태그와 일치하는 타입이 아닐경우(false), continue
             if (!Whitelist.whitelistCheck(targetItem)){ continue; }
 
-            // updatedItem 변수에 해당 Type, ID 를 지닌 아이템 정보를 받아옴(즉, 해당 아이템의 가장 현재 정보를 받아옴)
-            //ItemStack updatedItem = latestCustomItem;
-
-            // 업그레이드 가능한 아이템의 업데이트 기능이 비활성화 상태 + 업그레이드가 1강이라도 적용된 경우 >> 건너뜀
-            if ( !(ConfigHandler.getInstance().getIsWorkUpgradableItems()) && (CheckUpgrade.isUpgradingItems(targetItem)) ){
-                continue;
-            }
-
-            // 젬스톤 적용 시 업데이트가 비활성화 상태 + 젬스톤이 적용되어있는 아이템일 때 >> 건너뜀
-            if ( !(ConfigHandler.getInstance().getIsWorkGemstoneApplied()) && (CheckGemStone.isInGemstone(targetItem)) ) {
-                continue;
-            }
-
-            // 1. 내구도가 존재하는 아이템인지 확인
-            // 2. 아이템의 내구도가 최대가 아닌지 확인 (한 번이라도 사용된 경우)
-            // 3. 동시에 config 설정에서, "work-only-max-dura" 설정을 true 로 활성화 했을 경우, 현재 슬롯 건너뜀
-            if (targetItem.getType().getMaxDurability() > 0 && targetItem.getDurability() > 0 && ConfigHandler.getInstance().getIsWorkMaxDurability()) {
-                continue;
-            }
 
             // 이미 최신화된 아이템일 경우, 현재 슬롯 건너뜀
-            if (isLatestCustomItems(targetItem, latestCustomItem)) { continue; }
+            if (isLatestCustomItems(null, targetItem, latestCustomItem)) { continue; }
+
 
             // 인벤토리 슬롯에 있는 아이템의 수량을 가져옴
             int itemAmount = targetItem.getAmount();
@@ -76,7 +67,15 @@ public class InvUpdate {
             totalGiveItems.setAmount(itemAmount);
 
             // 바닐라 인첸트데이터 및 AdvancedEnchantments 인첸트가 존재 시, 해당 데이터 유지
-            totalGiveItems = EnchantData.setEnchantData(targetItem, totalGiveItems);
+            totalGiveItems = SetEnchant.setEnchantData(targetItem, totalGiveItems);
+
+            // 콘피그의 maintaining-durability 가 true 로, 내구도를 유지시키면서 업데이트 한다면
+            if(ConfigHandler.getInstance().getIsEnableMaintainingDurability()){
+                // 들고있던 아이템의 손상된 내구도만큼의 내구도를 깎아 지급
+                // 명령어를 사용한 commandSender 가 op 인지 확인해야 하니 매개변수에 commandSender
+                totalGiveItems = SetDurability.applyDamageToUpdatedItem(commandSender, targetItem, totalGiveItems);
+            }
+
 
             // 현재 처리 중인 슬롯 번호
             int currentSlot = i;
@@ -102,11 +101,7 @@ public class InvUpdate {
                 ));
 
                 // 성공 사운드 재생 (타깃 플레이어에게 == 자기 자신에게)
-                PlaySounds.playSounds(targetPlayer,
-                        ConfigHandler.getInstance().getSuccessSounds(),
-                        ConfigHandler.getInstance().getSuccessVolume(),
-                        ConfigHandler.getInstance().getSuccessPitch()
-                );
+                PlaySounds.playSounds(targetPlayer, ConfigHandler.getInstance().getSuccessSounds());
 
             }
 
@@ -128,18 +123,10 @@ public class InvUpdate {
                 ));
 
                 // 성공 사운드 재생 (업데이트 당한 타깃에게)
-                PlaySounds.playSounds(targetPlayer,
-                        ConfigHandler.getInstance().getSuccessSounds(),
-                        ConfigHandler.getInstance().getSuccessVolume(),
-                        ConfigHandler.getInstance().getSuccessPitch()
-                );
+                PlaySounds.playSounds(targetPlayer, ConfigHandler.getInstance().getSuccessSounds());
 
                 // 성공 사운드 재생 (업데이트 실행한 명령어 수행자에게)
-                PlaySounds.playSounds(commandSender,
-                        ConfigHandler.getInstance().getSuccessSounds(),
-                        ConfigHandler.getInstance().getSuccessVolume(),
-                        ConfigHandler.getInstance().getSuccessPitch()
-                );
+                PlaySounds.playSounds(commandSender, ConfigHandler.getInstance().getSuccessSounds());
             }
         }
 
@@ -160,11 +147,7 @@ public class InvUpdate {
                     ));
 
                     // 실패 사운드 재생
-                    PlaySounds.playSounds(targetPlayer,
-                            ConfigHandler.getInstance().getFailSounds(),
-                            ConfigHandler.getInstance().getFailVolume(),
-                            ConfigHandler.getInstance().getFailPitch()
-                    );
+                    PlaySounds.playSounds(targetPlayer, ConfigHandler.getInstance().getFailSounds());
                 }
 
                 // 타인의 인벤토리 업데이트를 사용하여 타인의 인벤토리를 업데이트 시킨경우
@@ -178,11 +161,7 @@ public class InvUpdate {
                     ));
 
                     // 실패 사운드 재생
-                    PlaySounds.playSounds(commandSender,
-                            ConfigHandler.getInstance().getFailSounds(),
-                            ConfigHandler.getInstance().getFailVolume(),
-                            ConfigHandler.getInstance().getFailPitch()
-                    );
+                    PlaySounds.playSounds(commandSender, ConfigHandler.getInstance().getFailSounds());
 
                 }
             }

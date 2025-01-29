@@ -1,17 +1,14 @@
+# 업데이트 시, 기본적으로 "업그레이드 정보 + 장착된 젬스톤 정보" 는 유지되면서 업데이트됩니다.
 # 기본 설정
 options:
-  # true 로 설정 시, MMOItems 아이템이 최대 내구도일 때에만 업데이트가 작동하도록 설정합니다.
-  # false 로 설정 시, 아이템 내구도가 깎여 있더라도 업데이트가 작동하도록 설정합니다.
-  work-only-max-dura: true
 
-  # true 로 설정 시, 아이템에 젬스톤이 적용된 상태에서도 업데이트 기능을 작동시킵니다.
-  # ※주의※ 활성화 시, 젬스톤이 적용된 아이템을 업데이트 할 때 아이템에 적용된 젬스톤들이 사라집니다.
-  work-with-gem-stone-applied: false
+  # true 로 설정 시, 콘솔창에 각종 디버깅 메시지를 표시합니다. (오직 OP의 행동에 의해서만 표시됨)
+  debug-log: true
 
+  # true 로 설정 시, 업데이트 하기 전의 내구도를 유지시킵니다.
+  # false 로 설정 시, 업데이트 시 내구도를 완전히 회복된 아이템으로 지급합니다.
+  maintaining-durability: true
 
-  # true 로 설정 시, 업그레이드된 아이템 또한 업데이트 가능하도록 합니다.
-  # ※주의※ 활성화 시, 업그레이드된 아이템을 업데이트할 때 아이템에 적용되어있는 업그레이드 데이터가 사라집니다.
-  work-upgrading-items: false
 
   # true 로 설정 시, 아이템에 적용된 인첸트를 유지한 채로 업데이트를 진행합니다.
   maintaining-vanilla-enchantment-data: true
@@ -67,21 +64,11 @@ whitelist:
     - ACCESSORY:문라이트_반지
 
 
-
-
-
-# 업데이트 수행 시 재생되는 사운드
 sounds:
-  # 아이템 업데이트 성공 시 재생되는 사운드
   success:
-    sound: "ENTITY_PLAYER_LEVELUP"
-    volume: 1.0
-    pitch: 1.0
-  # 아이템 업데이트 실패 시 재생되는 사운드
+    - "minecraft:entity.player.levelup, 1, 1"
   fail:
-    sound: "BLOCK_NOTE_BLOCK_COW_BELL"
-    volume: 0.9
-    pitch: 0.1
+    - "minecraft:block.note_block.cow_bell, 1, 0.1"
 
 
 

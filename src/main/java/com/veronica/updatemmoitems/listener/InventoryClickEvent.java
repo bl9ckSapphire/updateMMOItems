@@ -6,12 +6,29 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryClickEvent implements Listener {
-    @EventHandler
+    // 젬스톤 슬롯 장착 플러그인 쪽의 인벤토리 클릭 우선순위는 HIGH
+    /*
+    이벤트의 우선순위는 다음과 같은 순서로 실행
+    LOWEST → LOW → NORMAL → HIGH → HIGHEST → MONITOR
+    하지만 이것을 반대로 생각하고 코딩해야함
+
+    예).
+    우선순위 HIGH 인 곳에서 이벤트가 캔슬되었고
+    우선순위 HIGHEST 인 곳에서
+     if (event.isCancelled()) { return; }
+    이 코드가 존재한다면,
+    우선순위 HIGHEST 인 곳이 이벤트가 캔슬되었다는것을 감지하고 return; 하게 됨
+
+    즉, HIGH 인 곳에서 이벤트가 캔슬되었다면,
+    HIGHEST 에서 이 사실을 알고, HIGHEST 코드에서  if (event.isCancelled()) { return; } 을 사용하여 종료할 수 있음
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent event) {
 
         // 이미 취소된 이벤트인 경우 종료

@@ -4,7 +4,7 @@ authors: [bl9ckSapphire]
 website: https://github.com/bl9ckSapphire/updateMMOItems
 main: com.veronica.updatemmoitems.UpdateMMOItems
 api-version: '1.20'
-softdepend: [MMOItems, NBTAPI, AdvancedEnchantments, Oraxen, ItemsAdder]
+softdepend: [Nexo, Oraxen, ItemsAdder, MMOItems, NBTAPI, AdvancedEnchantments]
 
 
 commands:

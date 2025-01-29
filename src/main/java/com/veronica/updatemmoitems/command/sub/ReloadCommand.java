@@ -2,10 +2,7 @@ package com.veronica.updatemmoitems.command.sub;
 
 import com.veronica.updatemmoitems.UpdateMMOItems;
 import com.veronica.updatemmoitems.command.SubCommand;
-import com.veronica.updatemmoitems.config.AliasesHandler;
-import com.veronica.updatemmoitems.config.ConfigHandler;
-import com.veronica.updatemmoitems.config.Message;
-import com.veronica.updatemmoitems.config.OtherPluginHandler;
+import com.veronica.updatemmoitems.config.*;
 import com.veronica.updatemmoitems.permission.Permission;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -27,14 +24,14 @@ public class ReloadCommand extends SubCommand {
         if (!(sender instanceof Player) || sender.hasPermission(Permission.RELOAD_COMMAND.getPermission())) {
 
             // config.yml 리로드
-            UpdateMMOItems.getInstance().reloadConfig();
+            UpdateMMOItems.getInstance().reloadConfig(); // onEnable()에서는 필요없지만, 명령어 등으로 수동으로 리로드를 시도할 경우 이 코드가 필요함.
             ConfigHandler.getInstance().reloadConfigOptions();
 
             // aliases.yml 리로드 및 적용
             AliasesHandler.getInstance().reloadAliasesConfig();
 
-            // otherPlugins.yml 리로드 및 적용
-            OtherPluginHandler.getInstance().reloadOtherPluginsConfig();
+            //ignoreNbt.yml 리로드 및 적용
+            IgnoreNbtHandler.getInstance().reloadIgnoreNbtConfig();
 
 
             sender.sendMessage(miniMessage.deserialize(Message.RELOAD.getMessage(), Placeholder.parsed("prefix", Message.PREFIX.getMessage())));

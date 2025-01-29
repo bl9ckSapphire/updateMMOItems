@@ -40,11 +40,7 @@ public class InvUpdateCommand extends SubCommand {
                         Placeholder.parsed("prefix", Message.PREFIX.getMessage())));
 
                 // 실패 사운드 재생
-                PlaySounds.playSounds((Player) sender,
-                        ConfigHandler.getInstance().getFailSounds(),
-                        ConfigHandler.getInstance().getFailVolume(),
-                        ConfigHandler.getInstance().getFailPitch()
-                );
+                PlaySounds.playSounds((Player) sender, ConfigHandler.getInstance().getFailSounds());
 
                 return;
             }
@@ -79,12 +75,7 @@ public class InvUpdateCommand extends SubCommand {
                         Placeholder.parsed("player", targetPlayerName)));
 
                 // 실패 사운드 재생
-                PlaySounds.playSounds((Player) sender,
-                        ConfigHandler.getInstance().getFailSounds(),
-                        ConfigHandler.getInstance().getFailVolume(),
-                        ConfigHandler.getInstance().getFailPitch()
-                );
-
+                PlaySounds.playSounds((Player) sender, ConfigHandler.getInstance().getFailSounds());
                 return;
             }
 
