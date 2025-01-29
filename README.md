@@ -4,7 +4,7 @@
 ```
 Java : JDK-21 (자바 21 버전을 필요로합니다.)
 
-Bukkit : paper 1.20.6 +
+Bukkit : paper 1.20.5 +
 
 MMOItems : v6.9.5 +
 
