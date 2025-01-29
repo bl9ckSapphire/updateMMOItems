@@ -6,7 +6,7 @@ Java : JDK-21 (자바 21 버전을 필요로합니다.)
 
 Bukkit : paper 1.20.6 +
 
-MMOItems : v6.7.3 +
+MMOItems : v6.9.5 +
 
 NBT-API : v2.13.1 +
 ```
